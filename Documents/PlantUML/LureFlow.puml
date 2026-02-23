@@ -1,0 +1,57 @@
+@startuml
+title PhantomLure.ECS - 本隊 / 分隊 判定フロー
+
+skinparam shadowing false
+skinparam activity {
+  BackgroundColor White
+  BorderColor Black
+  ArrowColor Black
+}
+
+start
+
+:EnemyTargetScoringSystem.OnUpdate\n（各Enemyごとに実行）;
+:現在時刻 = ElapsedTime;
+
+if (現在時刻 < 次回判定時刻 ?) then (はい)
+  :今回は判定スキップ;
+  stop
+else (いいえ)
+  :次回判定時刻 = 現在時刻 + 判定間隔;
+endif
+
+:視界内ターゲット収集\n- Objective（目標）\n- Lure（囮）;
+
+:各ターゲットのスコア計算\n（魅力度・距離・信頼度など）;
+
+if (最良ターゲットあり ?) then (はい)
+  :CurrentTarget = 最良ターゲット;
+
+  if (最良ターゲットが囮 ?) then (はい)
+    :TargetIsLure = 1;
+  else (いいえ)
+    :TargetIsLure = 0;
+  endif
+
+else (いいえ)
+  :CurrentTarget = なし;
+  :TargetIsLure = 0;
+endif
+
+if (TargetIsLure == 1 ?) then (はい)
+  :分隊判定開始;
+
+  :乱数 r を生成;
+
+  if (r < 分隊化割合 ?) then (はい)
+    :IsDetached = 1\n（分隊として囮へ向かう）;
+  else (いいえ)
+    :IsDetached = 0\n（本隊に残る）;
+  endif
+
+else (いいえ)
+  :IsDetached = 0\n（全員本隊としてObjectiveへ向かう）;
+endif
+
+stop
+@enduml
