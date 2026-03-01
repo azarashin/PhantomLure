@@ -27,7 +27,7 @@ namespace PhantomLure.ECS
             var ecbSingleton = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
             var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-            // 構造変更はECBで遅延
+            // 讒矩螟画峩縺ｯECB縺ｧ驕�蟒ｶ
             ecb.AddComponent(gridEntity, new FlowFieldRuntime
             {
                 TargetCellIndex = -1,
@@ -39,7 +39,7 @@ namespace PhantomLure.ECS
             ecb.AddBuffer<CellDistance>(gridEntity).ResizeUninitialized(cellCount);
             ecb.AddBuffer<CellFlowDir>(gridEntity).ResizeUninitialized(cellCount);
 
-            // 初期値の書き込みは別Systemに任せる
+            // 蛻晄悄蛟､縺ｮ譖ｸ縺崎ｾｼ縺ｿ縺ｯ蛻･System縺ｫ莉ｻ縺帙ｋ
             ecb.AddComponent(gridEntity, new FlowFieldNeedsInit
             {
                 CellCount = cellCount
@@ -47,7 +47,7 @@ namespace PhantomLure.ECS
         }
     }
 
-    /// <summary>バッファ中身の初期化が必要であることを示すフラグ</summary>
+    /// <summary>繝舌ャ繝輔ぃ荳ｭ霄ｫ縺ｮ蛻晄悄蛹悶′蠢�隕√〒縺ゅｋ縺薙→繧堤､ｺ縺吶ヵ繝ｩ繧ｰ</summary>
     public struct FlowFieldNeedsInit : IComponentData
     {
         public int CellCount;
