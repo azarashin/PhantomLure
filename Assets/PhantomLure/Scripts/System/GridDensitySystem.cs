@@ -8,13 +8,11 @@ using UnityEngine.Rendering.VirtualTexturing;
 namespace PhantomLure.ECS
 {
     [BurstCompile]
-    [UpdateAfter(typeof(FlowFieldBootstrapSystem))]
     public partial struct GridDensitySystem : ISystem
     {
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<FlowFieldGrid>();
-            state.RequireForUpdate<FlowFieldRuntime>();
             state.RequireForUpdate<EnemyTag>();
         }
 
@@ -25,13 +23,13 @@ namespace PhantomLure.ECS
 
             var density = state.EntityManager.GetBuffer<CellDensity>(gridEntity);
 
-            // ƒNƒŠƒA
+            // ã‚¯ãƒªã‚¢
             for (int i = 0; i < density.Length; i++)
             {
                 density[i] = new CellDensity { Count = 0 };
             }
 
-            // WŒv
+            // é›†è¨ˆ
             foreach (var tr in SystemAPI.Query<RefRO<LocalTransform>>().WithAll<EnemyTag>())
             {
                 int idx = GridUtil.WorldToCellIndex(grid, tr.ValueRO.Position);
