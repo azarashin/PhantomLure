@@ -5,7 +5,6 @@ namespace PhantomLure.ECS
     // ゲームコアのタグ
     public struct LureTag : IComponentData { }
     public struct ObjectiveTag : IComponentData { }
-    public struct SectorTag : IComponentData {}
     public struct CoreTag   : IComponentData {}
 
     // ゲームコアのデバッグ用タグ
