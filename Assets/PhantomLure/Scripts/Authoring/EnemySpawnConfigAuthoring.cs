@@ -1,4 +1,4 @@
-using Unity.Entities;
+ï»¿using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -27,17 +27,17 @@ namespace PhantomLure.ECS
 
         [Header("Circle")]
         public float CircleRadius = 12f;
-        public float CircleSquadRadiusStep = 4f;   // squad‚²‚Æ‚É”¼Œa‚ğ‚¸‚ç‚·
+        public float CircleSquadRadiusStep = 4f;   // squadã”ã¨ã«åŠå¾„ã‚’ãšã‚‰ã™
 
         [Header("FrontLine")]
-        public float FrontLineLength = 40f;        // X•ûŒü‚Ì’·‚³
-        public float FrontLineSpacing = 1.2f;      // •º‚ÌŠÔŠu
-        public float FrontLineZOffset = 0f;        // ‘Oü‚ÌZˆÊ’uiCenter.z + offsetj
-        public float FrontLineSquadZStep = 3.5f;   // squad‚²‚Æ‚ÉZ‚ğ‚¸‚ç‚·ic—ñj
+        public float FrontLineLength = 40f;        // Xæ–¹å‘ã®é•·ã•
+        public float FrontLineSpacing = 1.2f;      // å…µã®é–“éš”
+        public float FrontLineZOffset = 0f;        // å‰ç·šã®Zä½ç½®ï¼ˆCenter.z + offsetï¼‰
+        public float FrontLineSquadZStep = 3.5f;   // squadã”ã¨ã«Zã‚’ãšã‚‰ã™ï¼ˆç¸¦åˆ—ï¼‰
 
         [Header("Random Rect")]
-        public float2 RandomRectSize = new float2(40f, 40f); // XZƒTƒCƒY
-        public float RandomMinDistanceJitter = 0f;           // 0‚È‚çƒƒ‰ƒ“ƒ_ƒ€A>0‚Å­‚µU‚ç‚·•â•
+        public float2 RandomRectSize = new float2(40f, 40f); // XZã‚µã‚¤ã‚º
+        public float RandomMinDistanceJitter = 0f;           // 0ãªã‚‰ç´”ãƒ©ãƒ³ãƒ€ãƒ ã€>0ã§å°‘ã—æ•£ã‚‰ã™è£œåŠ©
     }
 
     public struct EnemySpawnConfig : IComponentData
