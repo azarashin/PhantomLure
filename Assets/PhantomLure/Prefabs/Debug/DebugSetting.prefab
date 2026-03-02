@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 848109920226413184}
   - component: {fileID: 2907225229285226458}
+  - component: {fileID: 7054038041406482829}
   m_Layer: 0
   m_Name: DebugSetting
   m_TagString: Untagged
@@ -45,3 +46,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.Mono.DebugGroup.DebugSetting
   _debugEnabled: 1
+--- !u!114 &7054038041406482829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3472478904870435779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d301630bd7c5b54aa36b1fd0b09ba9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhantomLure::PhantomLure.Mono.DebugGroup.DebugSettingHotkey
