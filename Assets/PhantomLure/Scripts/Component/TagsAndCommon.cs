@@ -2,9 +2,17 @@ using Unity.Entities;
 
 namespace PhantomLure.ECS
 {
+    // ゲームコアのタグ
     public struct EnemyTag : IComponentData { }
     public struct LureTag : IComponentData { }
     public struct ObjectiveTag : IComponentData { }
+    public struct PlayerTag : IComponentData {}
+    public struct SectorTag : IComponentData {}
+    public struct CoreTag   : IComponentData {}
+
+    // ゲームコアのデバッグ用タグ
+    public struct DebugCountGate : IComponentData { }
+
 
     /// <summary>FlowFieldや密度など、グリッド運用に必要な動的バッファを持つシングルトン</summary>
     public struct FlowFieldRuntime : IComponentData
