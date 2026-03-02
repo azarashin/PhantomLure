@@ -1,4 +1,5 @@
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace PhantomLure.Mono.DebugGroup
 {
@@ -7,7 +8,13 @@ namespace PhantomLure.Mono.DebugGroup
     {
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F9))
+            // キーボード未接続などの安全対策
+            if (Keyboard.current == null)
+            {
+                return;
+            }
+
+            if (Keyboard.current.f9Key.wasPressedThisFrame)
             {
                 DebugSetting.SetEnabled(!DebugSetting.IsEnabled());
             }
