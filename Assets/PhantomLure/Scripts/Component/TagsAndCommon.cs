@@ -3,7 +3,6 @@
 namespace PhantomLure.ECS
 {
     // ゲームコアのタグ
-    public struct EnemyTag : IComponentData { }
     public struct LureTag : IComponentData { }
     public struct ObjectiveTag : IComponentData { }
     public struct SectorTag : IComponentData {}
