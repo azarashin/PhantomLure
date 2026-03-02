@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ade9dc49433e001478ad6ac2425db3dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.Mono.DebugGroup.DebugSetting
-  _debugEnabled: 1
+  _debugEnabled: 0
 --- !u!114 &7054038041406482829
 MonoBehaviour:
   m_ObjectHideFlags: 0
