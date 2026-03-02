@@ -6,7 +6,6 @@ namespace PhantomLure.ECS
     public struct EnemyTag : IComponentData { }
     public struct LureTag : IComponentData { }
     public struct ObjectiveTag : IComponentData { }
-    public struct PlayerTag : IComponentData {}
     public struct SectorTag : IComponentData {}
     public struct CoreTag   : IComponentData {}
 
