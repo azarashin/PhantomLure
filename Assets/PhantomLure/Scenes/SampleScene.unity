@@ -597,6 +597,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1610414726 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3472478904870435779, guid: 1c1bc62bce3abb0448594b04fed7397a, type: 3}
+  m_PrefabInstance: {fileID: 2039344922672071497}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1610414730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1610414726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c9ec6bcc00bd4a498235633f2dc9f4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhantomLure::SectorGizmoDrawer
+  drawSectors: 1
+  drawSpawnPoints: 1
+  spawnRadius: 0.3
 --- !u!1001 &2039344922672071497
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -652,7 +672,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3472478904870435779, guid: 1c1bc62bce3abb0448594b04fed7397a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1610414730}
   m_SourcePrefab: {fileID: 100100000, guid: 1c1bc62bce3abb0448594b04fed7397a, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
