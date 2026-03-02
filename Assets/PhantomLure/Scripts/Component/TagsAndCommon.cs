@@ -1,4 +1,4 @@
-using Unity.Entities;
+﻿using Unity.Entities;
 
 namespace PhantomLure.ECS
 {
@@ -44,4 +44,36 @@ namespace PhantomLure.ECS
     {
         public Unity.Mathematics.float2 Dir; // XZ方向
     }
+
+
+    // -----------------------------
+    // 共通（最低限）
+    // -----------------------------
+
+    public enum Faction : byte
+    {
+        Neutral = 0,
+        Player = 1,
+        Enemy = 2
+    }
+
+    /// <summary>陣営/所属</summary>
+    public struct FactionData : IComponentData
+    {
+        public Faction Value;
+    }
+
+    /// <summary>HPが必要なら（Core/Enemyなど）</summary>
+    public struct Health : IComponentData
+    {
+        public float Current;
+        public float Max;
+    }
+
+    /// <summary>「どの Sector にいる/属するか」参照したい時に使う</summary>
+    public struct SectorRef : IComponentData
+    {
+        public Entity Sector;
+    }
+
 }
