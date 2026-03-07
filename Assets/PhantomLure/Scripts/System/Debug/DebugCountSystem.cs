@@ -1,4 +1,4 @@
-using PhantomLure.ECS;
+﻿using PhantomLure.ECS;
 using Unity.Entities;
 using UnityEngine;
 
@@ -12,7 +12,7 @@ namespace PhantomLure.ECS.DebugGroup
         {
             _playerQ = state.GetEntityQuery(ComponentType.ReadOnly<PlayerTag>());
             _enemyQ = state.GetEntityQuery(ComponentType.ReadOnly<EnemyTag>());
-            _sectorQ = state.GetEntityQuery(ComponentType.ReadOnly<SectorTag>());
+            _sectorQ = state.GetEntityQuery(ComponentType.ReadOnly<SectorTags>());
             _coreQ = state.GetEntityQuery(ComponentType.ReadOnly<CoreTag>());
 
             state.RequireForUpdate<DebugCountGate>();

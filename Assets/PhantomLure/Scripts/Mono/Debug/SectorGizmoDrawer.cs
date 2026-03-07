@@ -28,14 +28,16 @@ public class SectorGizmoDrawer : MonoBehaviour
         if (drawSectors)
         {
             var q = em.CreateEntityQuery(
-                ComponentType.ReadOnly<SectorTag>(),
+                ComponentType.ReadOnly<SectorTags>(),
                 ComponentType.ReadOnly<SectorBounds>());
 
             using var sectors = q.ToEntityArray(Unity.Collections.Allocator.Temp);
             foreach (var e in sectors)
             {
                 var b = em.GetComponentData<SectorBounds>(e);
-                DrawRectXZ(b.Min, b.Max);
+                var min = b.Center - b.Size / 2;
+                var max = b.Center + b.Size / 2;
+                DrawRectXZ(new float2(min.x, min.z), new float2(max.x, max.z));
             }
         }
 
@@ -43,7 +45,7 @@ public class SectorGizmoDrawer : MonoBehaviour
         if (drawSpawnPoints)
         {
             var q = em.CreateEntityQuery(
-                ComponentType.ReadOnly<SectorTag>(),
+                ComponentType.ReadOnly<SectorTags>(),
                 ComponentType.ReadOnly<SpawnPoint>());
 
             using var sectors = q.ToEntityArray(Unity.Collections.Allocator.Temp);

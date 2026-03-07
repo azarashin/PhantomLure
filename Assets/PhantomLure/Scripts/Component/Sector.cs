@@ -7,13 +7,10 @@ using Unity.Mathematics;
 
 namespace PhantomLure.ECS
 {
-    public struct SectorTag : IComponentData { }
     public struct SectorBounds : IComponentData
     {
-        public float2 Min;
-        public float2 Max;
         public float3 Center;
-        public float3 HalfExtents; // (x,y,z) 半径
+        public float3 Size;
     }
 
     /// <summary>Sector の識別（ログ/デバッグ用に便利）</summary>
@@ -25,5 +22,20 @@ namespace PhantomLure.ECS
     public struct SpawnPoint : IBufferElementData
     {
         public float3 Position;
+    }
+
+    public struct SectorTags : IComponentData
+    {
+        public uint Value;
+    }
+
+    public struct AlertLevel : IComponentData
+    {
+        public int Value;
+    }
+
+    public struct SpawnBudget : IComponentData
+    {
+        public int Value;
     }
 }
