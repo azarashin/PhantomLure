@@ -1,6 +1,7 @@
 ﻿using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 namespace PhantomLure.ECS
 {
@@ -38,6 +39,12 @@ namespace PhantomLure.ECS
         [Header("Random Rect")]
         public float2 RandomRectSize = new float2(40f, 40f); // XZサイズ
         public float RandomMinDistanceJitter = 0f;           // 0なら純ランダム、>0で少し散らす補助
+
+        [Header("Attribs")]
+        public SpawnPointTagId[] Tags;
+        public float Weight = 1f;
+
+
     }
 
     public struct EnemySpawnConfig : IComponentData
@@ -93,6 +100,43 @@ namespace PhantomLure.ECS
                 RandomRectSize = authoring.RandomRectSize,
                 RandomMinDistanceJitter = math.max(0f, authoring.RandomMinDistanceJitter)
             });
+
+            AddComponent<SpawnPointTag>(e);
+
+            AddComponent(e, new SpawnArea
+            {
+                Center = authoring.transform.position,
+                HalfExtents = float3.zero
+            });
+
+            AddComponent(e, new SpawnPointWeight
+            {
+                Value = Mathf.Max(0f, authoring.Weight)
+            });
+
+
+            var sectorAuthoring = authoring.GetComponentInParent<SectorAuthoring>();
+            if (sectorAuthoring != null)
+            {
+                var sectorEntity = GetEntity(sectorAuthoring, TransformUsageFlags.None);
+                AddComponent(e, new SpawnPointSector
+                {
+                    Value = sectorEntity
+                });
+            }
+
+            DynamicBuffer<SpawnPointTags> buffer = AddBuffer<SpawnPointTags>(e);
+            SpawnPointTagId[] tags = authoring.Tags;
+            if (tags != null)
+            {
+                for (int i = 0; i < tags.Length; i++)
+                {
+                    buffer.Add(new SpawnPointTags
+                    {
+                        Value = (int)tags[i]
+                    });
+                }
+            }
         }
     }
 }

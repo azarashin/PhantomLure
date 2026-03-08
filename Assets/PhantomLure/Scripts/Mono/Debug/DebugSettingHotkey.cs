@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace PhantomLure.Mono.DebugGroup
+namespace PhantomLure.Debugging
 {
 
     public class DebugSettingHotkey : MonoBehaviour
