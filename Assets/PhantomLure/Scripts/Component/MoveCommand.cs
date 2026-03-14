@@ -10,6 +10,12 @@ namespace PhantomLure.ECS
     {
     }
 
+    /// <summary>移動パラメータ（Player/Enemy/Droneでも流用可）</summary>
+    public struct MoveSpeed : IComponentData
+    {
+        public float Value; // m/s
+    }
+
     /// <summary>
     /// 現在の移動先
     /// </summary>
@@ -28,13 +34,24 @@ namespace PhantomLure.ECS
     }
 
     /// <summary>
+    /// 本隊内での隊列順
+    /// </summary>
+    public struct FormationIndex : IComponentData
+    {
+        public int Value;
+    }
+
+    /// <summary>
     /// 本隊全体への移動命令
-    /// 1フレームだけ存在する命令エンティティ
     /// </summary>
     public struct MainForceMoveCommand : IComponentData
     {
         public float3 Destination;
+        public float3 Forward;
         public float StoppingDistance;
+        public float SpacingX;
+        public float SpacingZ;
+        public int ColumnCount;
     }
 
     public struct MainForceCommandDebug : IComponentData

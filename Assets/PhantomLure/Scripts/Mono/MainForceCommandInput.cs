@@ -1,5 +1,6 @@
 ﻿using PhantomLure.ECS;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,6 +19,18 @@ namespace PhantomLure.Presentation
 
         [SerializeField]
         float _rayDistance = 1000.0f;
+
+        [Header("隊列のユニット間の距離")]
+        [SerializeField]
+        float _spacingX = 1.5f;
+
+        [Header("隊列のユニット間の距離")]
+        [SerializeField]
+        float _spacingZ = 1.5f;
+
+        [Header("隊列の幅")]
+        [SerializeField]
+        int _columnCount = 3;
 
         private EntityManager _entityManager;
 
@@ -63,20 +76,25 @@ namespace PhantomLure.Presentation
                 return;
             }
 
+            Vector3 cameraForward = _camera.transform.forward;
+            cameraForward.y = 0.0f;
+
+            if (cameraForward.sqrMagnitude < 0.0001f)
+            {
+                cameraForward = Vector3.forward;
+            }
+
+            cameraForward.Normalize();
+
             Entity commandEntity = _entityManager.CreateEntity(typeof(MainForceMoveCommand));
             _entityManager.SetComponentData(commandEntity, new MainForceMoveCommand
             {
                 Destination = hit.point,
-                StoppingDistance = _stoppingDistance
-            });
-
-
-            // for Debug
-            Entity debugEntity = _entityManager.CreateEntity(typeof(MainForceCommandDebug));
-            _entityManager.SetComponentData(debugEntity, new MainForceCommandDebug
-            {
-                Position = hit.point,
-                LifeTime = 1.0f
+                Forward = cameraForward,
+                StoppingDistance = _stoppingDistance,
+                SpacingX = _spacingX,
+                SpacingZ = _spacingZ,
+                ColumnCount = math.max(1, _columnCount)
             });
         }
     }

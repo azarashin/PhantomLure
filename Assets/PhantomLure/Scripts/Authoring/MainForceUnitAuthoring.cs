@@ -7,8 +7,14 @@ namespace PhantomLure.Authoring
 {
     public class MainForceUnitAuthoring : MonoBehaviour
     {
-        [SerializeField] float _moveSpeed = 3.5f;
-        [SerializeField] float _stoppingDistance = 0.1f;
+        [SerializeField]
+        float _moveSpeed = 3.5f;
+
+        [SerializeField]
+        float _stoppingDistance = 0.1f;
+
+        [SerializeField]
+        int _formationIndex = 0;
 
         private class Baker : Baker<MainForceUnitAuthoring>
         {
@@ -32,6 +38,11 @@ namespace PhantomLure.Authoring
                 AddComponent(entity, new MoveState
                 {
                     IsMoving = false
+                });
+
+                AddComponent(entity, new FormationIndex
+                {
+                    Value = authoring._formationIndex
                 });
             }
         }
