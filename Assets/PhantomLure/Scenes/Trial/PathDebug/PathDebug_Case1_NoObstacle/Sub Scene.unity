@@ -119,6 +119,52 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &1150144194
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1150144196}
+  - component: {fileID: 1150144195}
+  m_Layer: 0
+  m_Name: 'MainForceUnitAuthoring '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1150144195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1150144194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06a153eda54d2f441988d3cdf86e74d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhantomLure::PhantomLure.Authoring.MainForceUnitAuthoring
+  _moveSpeed: 3.5
+  _stoppingDistance: 0.1
+--- !u!4 &1150144196
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1150144194}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1606659209
 GameObject:
   m_ObjectHideFlags: 0
@@ -210,8 +256,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7d8937b3bb300f4187c868844bc0ede, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.ECS.PlayerAuthoring
-  _addPlayerTag: 1
-  _addPathPointBuffer: 1
+  AddPlayerTag: 1
+  AddPathPointBuffer: 1
 --- !u!4 &1808998742
 Transform:
   m_ObjectHideFlags: 0
@@ -284,3 +330,4 @@ SceneRoots:
   - {fileID: 1606659211}
   - {fileID: 2038438449}
   - {fileID: 1808998742}
+  - {fileID: 1150144196}
