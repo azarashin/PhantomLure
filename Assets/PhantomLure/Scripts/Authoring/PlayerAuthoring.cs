@@ -10,29 +10,36 @@ namespace PhantomLure.ECS
     public class PlayerAuthoring : MonoBehaviour
     {
         [Header("Bake")]
-        [SerializeField] private bool _addPlayerTag = true;
+        public bool AddPlayerTag = true;
 
         [Header("Optional Debug")]
-        [SerializeField] private bool _addPathPointBuffer = true;
+        public bool AddPathPointBuffer = true;
 
-        private class Baker : Baker<PlayerAuthoring>
+    }
+    public class PlayerAuthoringBaker : Baker<PlayerAuthoring>
+    {
+        public override void Bake(PlayerAuthoring authoring)
         {
-            public override void Bake(PlayerAuthoring authoring)
+            // Transform を持つ Entity として生成
+            var entity = GetEntity(TransformUsageFlags.Dynamic);
+
+            if (authoring.AddPlayerTag)
             {
-                // Transform を持つ Entity として生成
-                var entity = GetEntity(TransformUsageFlags.Dynamic);
-
-                if (authoring._addPlayerTag)
-                {
-                    AddComponent<PlayerTag>(entity);
-                }
-
-                // 経路探索結果を受けるバッファを先に付けておくと扱いやすい
-                if (authoring._addPathPointBuffer)
-                {
-                    AddBuffer<PathPoint>(entity);
-                }
+                AddComponent<PlayerTag>(entity);
             }
+
+            // 経路探索結果を受けるバッファを先に付けておくと扱いやすい
+            if (authoring.AddPathPointBuffer)
+            {
+                AddBuffer<PathPoint>(entity);
+            }
+ 
+            AddComponent(entity, new PlayerCommandData
+            {
+                Move = default,
+                ClickRequested = 0,
+                ClickWorldPosition = default
+            });
         }
     }
 }

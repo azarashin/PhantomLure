@@ -23,4 +23,15 @@ namespace PhantomLure.ECS
     {
         public float Value; // m/s
     }
+    public struct PlayerCommandData : IComponentData
+    {
+        public float2 Move;                 // -1 ～ 1
+        public byte ClickRequested;         // 1フレームだけ立つ
+        public float3 ClickWorldPosition;   // クリック地点
+    }
+    public struct PlayerInputConfig : IComponentData
+    {
+        public int GroundLayerMask;
+        public float FallbackGroundY;
+    }
 }
