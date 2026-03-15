@@ -10,10 +10,12 @@ namespace PhantomLure.ECS
     {
     }
 
-    /// <summary>移動パラメータ（Player/Enemy/Droneでも流用可）</summary>
+    /// <summary>
+    /// 移動パラメータ
+    /// </summary>
     public struct MoveSpeed : IComponentData
     {
-        public float Value; // m/s
+        public float Value;
     }
 
     /// <summary>
@@ -75,17 +77,34 @@ namespace PhantomLure.ECS
         public float MaxCatchUpMultiplier;
     }
 
-    /// 本隊全体への移動命令
+    /// <summary>
+    /// アンカーの経路追従状態
+    /// </summary>
+    public struct MainForcePathState : IComponentData
+    {
+        public int CurrentPathIndex;
+        public float WaypointReachDistance;
+        public byte WaitingForPath;
+    }
+
+    /// <summary>
+    /// ユニットの局所障害物回避設定
+    /// </summary>
+    public struct MainForceAvoidanceSettings : IComponentData
+    {
+        public float BlockProbeDistance;
+        public float ObstacleRepulsionRadius;
+        public float ObstacleRepulsionWeight;
+        public float LateralProbeDistance;
+        public float LateralProbeWeight;
+    }
+
+    /// <summary>
     /// 本隊全体への移動命令
     /// </summary>
     public struct MainForceMoveCommand : IComponentData
     {
         public float3 Destination;
-        public float3 Forward;
-        public float StoppingDistance;
-        public float SpacingX;
-        public float SpacingZ;
-        public int ColumnCount;
     }
 
     public struct MainForceCommandDebug : IComponentData
@@ -93,5 +112,4 @@ namespace PhantomLure.ECS
         public float3 Position;
         public float LifeTime;
     }
-
 }
