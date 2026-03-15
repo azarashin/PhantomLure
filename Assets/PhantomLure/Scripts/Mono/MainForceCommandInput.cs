@@ -1,6 +1,5 @@
 ﻿using PhantomLure.ECS;
 using Unity.Entities;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,22 +14,13 @@ namespace PhantomLure.Presentation
         LayerMask _groundMask = ~0;
 
         [SerializeField]
-        float _stoppingDistance = 0.1f;
-
-        [SerializeField]
         float _rayDistance = 1000.0f;
 
-        [Header("隊列のユニット間の距離")]
         [SerializeField]
-        float _spacingX = 1.5f;
+        bool _createDebugMarker = true;
 
-        [Header("隊列のユニット間の距離")]
         [SerializeField]
-        float _spacingZ = 1.5f;
-
-        [Header("隊列の幅")]
-        [SerializeField]
-        int _columnCount = 3;
+        float _debugMarkerLifeTime = 1.0f;
 
         private EntityManager _entityManager;
 
@@ -76,26 +66,21 @@ namespace PhantomLure.Presentation
                 return;
             }
 
-            Vector3 cameraForward = _camera.transform.forward;
-            cameraForward.y = 0.0f;
-
-            if (cameraForward.sqrMagnitude < 0.0001f)
+            Entity commandEntity = _entityManager.CreateEntity();
+            _entityManager.AddComponentData(commandEntity, new MainForceMoveCommand
             {
-                cameraForward = Vector3.forward;
-            }
-
-            cameraForward.Normalize();
-
-            Entity commandEntity = _entityManager.CreateEntity(typeof(MainForceMoveCommand));
-            _entityManager.SetComponentData(commandEntity, new MainForceMoveCommand
-            {
-                Destination = hit.point,
-                Forward = cameraForward,
-                StoppingDistance = _stoppingDistance,
-                SpacingX = _spacingX,
-                SpacingZ = _spacingZ,
-                ColumnCount = math.max(1, _columnCount)
+                Destination = hit.point
             });
+
+            if (_createDebugMarker)
+            {
+                Entity debugEntity = _entityManager.CreateEntity();
+                _entityManager.AddComponentData(debugEntity, new MainForceCommandDebug
+                {
+                    Position = hit.point,
+                    LifeTime = _debugMarkerLifeTime
+                });
+            }
         }
     }
 }
