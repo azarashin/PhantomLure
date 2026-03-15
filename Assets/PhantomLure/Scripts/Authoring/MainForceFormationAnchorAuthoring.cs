@@ -31,6 +31,24 @@ namespace PhantomLure.Authoring
         [SerializeField]
         float _maxCatchUpMultiplier = 1.75f;
 
+        [SerializeField]
+        float _waypointReachDistance = 0.3f;
+
+        [SerializeField]
+        float _blockProbeDistance = 0.8f;
+
+        [SerializeField]
+        float _obstacleRepulsionRadius = 1.25f;
+
+        [SerializeField]
+        float _obstacleRepulsionWeight = 1.2f;
+
+        [SerializeField]
+        float _lateralProbeDistance = 0.9f;
+
+        [SerializeField]
+        float _lateralProbeWeight = 1.35f;
+
         private class Baker : Baker<MainForceFormationAnchorAuthoring>
         {
             public override void Bake(MainForceFormationAnchorAuthoring authoring)
@@ -56,6 +74,24 @@ namespace PhantomLure.Authoring
                     SlowDownDistance = math.max(0.01f, authoring._slowDownDistance),
                     MaxCatchUpMultiplier = math.max(1.0f, authoring._maxCatchUpMultiplier)
                 });
+
+                AddComponent(entity, new MainForcePathState
+                {
+                    CurrentPathIndex = 0,
+                    WaypointReachDistance = math.max(0.05f, authoring._waypointReachDistance),
+                    WaitingForPath = 0
+                });
+
+                AddComponent(entity, new MainForceAvoidanceSettings
+                {
+                    BlockProbeDistance = math.max(0.05f, authoring._blockProbeDistance),
+                    ObstacleRepulsionRadius = math.max(0.1f, authoring._obstacleRepulsionRadius),
+                    ObstacleRepulsionWeight = math.max(0.0f, authoring._obstacleRepulsionWeight),
+                    LateralProbeDistance = math.max(0.05f, authoring._lateralProbeDistance),
+                    LateralProbeWeight = math.max(0.0f, authoring._lateralProbeWeight)
+                });
+
+                AddBuffer<PathPoint>(entity);
             }
         }
     }
