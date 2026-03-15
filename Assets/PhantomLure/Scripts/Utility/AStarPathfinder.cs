@@ -27,19 +27,33 @@ namespace PhantomLure.ECS
             int2 startCell = GridUtility.ToCell(grid, startWorld);
             int2 goalCell = GridUtility.ToCell(grid, goalWorld);
 
-            if (!GridUtility.IsInBounds(grid, startCell) || !GridUtility.IsInBounds(grid, goalCell))
+            if (!GridUtility.IsInBounds(grid, startCell))
+            {
                 return false;
+            }
+
+            if (!GridUtility.IsInBounds(grid, goalCell))
+            {
+                return false;
+            }
+
+            if (!GridUtility.TryFindNearestWalkableCell(grid, cells, startCell, 4, out startCell))
+            {
+                return false;
+            }
+
+            if (!GridUtility.TryFindNearestWalkableCell(grid, cells, goalCell, 4, out goalCell))
+            {
+                return false;
+            }
 
             int startIndex = GridUtility.ToIndex(grid, startCell);
             int goalIndex = GridUtility.ToIndex(grid, goalCell);
 
-            if (cells[startIndex].Walkable == 0 || cells[goalIndex].Walkable == 0)
-                return false;
-
             int total = grid.Width * grid.Height;
 
-            var nodes = new NativeArray<AStarNode>(total, allocator);
-            var openList = new NativeList<int>(allocator);
+            NativeArray<AStarNode> nodes = new NativeArray<AStarNode>(total, allocator);
+            NativeList<int> openList = new NativeList<int>(allocator);
 
             for (int i = 0; i < total; i++)
             {
@@ -47,7 +61,7 @@ namespace PhantomLure.ECS
                 {
                     ParentIndex = -1,
                     G = float.MaxValue,
-                    H = 0f,
+                    H = 0.0f,
                     Open = 0,
                     Closed = 0
                 };
@@ -56,11 +70,12 @@ namespace PhantomLure.ECS
             nodes[startIndex] = new AStarNode
             {
                 ParentIndex = -1,
-                G = 0f,
+                G = 0.0f,
                 H = GridUtility.Heuristic(startCell, goalCell),
                 Open = 1,
                 Closed = 0
             };
+
             openList.Add(startIndex);
 
             bool found = false;
@@ -72,7 +87,7 @@ namespace PhantomLure.ECS
 
                 RemoveAtSwapBack(ref openList, currentOpenListIndex);
 
-                var currentNode = nodes[currentIndex];
+                AStarNode currentNode = nodes[currentIndex];
                 currentNode.Open = 0;
                 currentNode.Closed = 1;
                 nodes[currentIndex] = currentNode;
@@ -88,18 +103,21 @@ namespace PhantomLure.ECS
                 for (int i = 0; i < Neighbor4.Length; i++)
                 {
                     int2 nextCell = currentCell + Neighbor4[i];
-                    if (!GridUtility.IsInBounds(grid, nextCell))
+
+                    if (!GridUtility.IsWalkable(grid, cells, nextCell))
+                    {
                         continue;
+                    }
 
                     int nextIndex = GridUtility.ToIndex(grid, nextCell);
-                    if (cells[nextIndex].Walkable == 0)
-                        continue;
+                    AStarNode nextNode = nodes[nextIndex];
 
-                    var nextNode = nodes[nextIndex];
                     if (nextNode.Closed != 0)
+                    {
                         continue;
+                    }
 
-                    float moveCost = cells[nextIndex].Cost <= 0f ? 1f : cells[nextIndex].Cost;
+                    float moveCost = cells[nextIndex].Cost <= 0.0f ? 1.0f : cells[nextIndex].Cost;
                     float tentativeG = currentNode.G + moveCost;
 
                     if (nextNode.Open == 0 || tentativeG < nextNode.G)
@@ -126,10 +144,11 @@ namespace PhantomLure.ECS
                 return false;
             }
 
-            ReconstructPath(grid, nodes, goalIndex, ref outPath);
+            ReconstructSimplifiedPath(grid, nodes, goalIndex, ref outPath);
 
             nodes.Dispose();
             openList.Dispose();
+
             return outPath.Length > 0;
         }
 
@@ -141,7 +160,7 @@ namespace PhantomLure.ECS
 
             for (int i = 1; i < openList.Length; i++)
             {
-                var node = nodes[openList[i]];
+                AStarNode node = nodes[openList[i]];
                 float f = node.F;
 
                 if (f < bestF || (math.abs(f - bestF) < 0.0001f && node.H < bestH))
@@ -162,28 +181,57 @@ namespace PhantomLure.ECS
             list.RemoveAt(last);
         }
 
-        private static void ReconstructPath(
+        private static void ReconstructSimplifiedPath(
             in GridConfig grid,
             NativeArray<AStarNode> nodes,
             int goalIndex,
             ref NativeList<float3> outPath)
         {
-            var reverse = new NativeList<float3>(Allocator.Temp);
+            NativeList<int2> reverseCells = new NativeList<int2>(Allocator.Temp);
 
             int current = goalIndex;
+
             while (current >= 0)
             {
                 int2 cell = new int2(current % grid.Width, current / grid.Width);
-                reverse.Add(GridUtility.ToWorldCenter(grid, cell));
+                reverseCells.Add(cell);
                 current = nodes[current].ParentIndex;
             }
 
-            for (int i = reverse.Length - 1; i >= 0; i--)
+            NativeList<int2> orderedCells = new NativeList<int2>(Allocator.Temp);
+
+            for (int i = reverseCells.Length - 1; i >= 0; i--)
             {
-                outPath.Add(reverse[i]);
+                orderedCells.Add(reverseCells[i]);
             }
 
-            reverse.Dispose();
+            if (orderedCells.Length > 0)
+            {
+                outPath.Add(GridUtility.ToWorldCenter(grid, orderedCells[0]));
+
+                for (int i = 1; i < orderedCells.Length - 1; i++)
+                {
+                    int2 prev = orderedCells[i - 1];
+                    int2 currentCell = orderedCells[i];
+                    int2 next = orderedCells[i + 1];
+
+                    int2 dirA = currentCell - prev;
+                    int2 dirB = next - currentCell;
+
+                    if (!dirA.Equals(dirB))
+                    {
+                        outPath.Add(GridUtility.ToWorldCenter(grid, currentCell));
+                    }
+                }
+
+                if (orderedCells.Length >= 2)
+                {
+                    outPath.Add(GridUtility.ToWorldCenter(grid, orderedCells[orderedCells.Length - 1]));
+                }
+            }
+
+            reverseCells.Dispose();
+            orderedCells.Dispose();
         }
     }
 }
