@@ -8,6 +8,9 @@ namespace PhantomLure.Authoring
     public class MainForceUnitAuthoring : MonoBehaviour
     {
         [SerializeField]
+        MainForceFormationAnchorAuthoring _anchorAuthoring;
+
+        [SerializeField]
         float _moveSpeed = 3.5f;
 
         [SerializeField]
@@ -21,6 +24,7 @@ namespace PhantomLure.Authoring
             public override void Bake(MainForceUnitAuthoring authoring)
             {
                 Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+                Entity anchorEntity = GetEntity(authoring._anchorAuthoring, TransformUsageFlags.Dynamic);
 
                 AddComponent<MainForceTag>(entity);
 
@@ -40,9 +44,15 @@ namespace PhantomLure.Authoring
                     IsMoving = false
                 });
 
+
                 AddComponent(entity, new FormationIndex
                 {
                     Value = authoring._formationIndex
+                });
+
+                AddComponent(entity, new FormationMember
+                {
+                    AnchorEntity = anchorEntity
                 });
             }
         }

@@ -11,6 +11,56 @@ namespace PhantomLure.Systems
     public partial struct ApplyMainForceMoveCommandSystem : ISystem
     {
         private EntityQuery _commandQuery;
+        private EntityQuery _anchorQuery;
+
+        [BurstCompile]
+        public void OnCreate(ref SystemState state)
+        {
+            _commandQuery = SystemAPI.QueryBuilder()
+                .WithAll<MainForceMoveCommand>()
+                .Build();
+
+            _anchorQuery = SystemAPI.QueryBuilder()
+                .WithAll<MainForceFormationAnchor>()
+                .Build();
+
+            state.RequireForUpdate(_commandQuery);
+            state.RequireForUpdate(_anchorQuery);
+        }
+
+        [BurstCompile]
+        public void OnUpdate(ref SystemState state)
+        {
+            using NativeArray<MainForceMoveCommand> commands = _commandQuery.ToComponentDataArray<MainForceMoveCommand>(Allocator.Temp);
+
+            if (commands.Length == 0)
+            {
+                return;
+            }
+
+            MainForceMoveCommand latestCommand = commands[commands.Length - 1];
+
+            foreach (RefRW<MainForceFormationAnchor> anchor in
+                     SystemAPI.Query<RefRW<MainForceFormationAnchor>>())
+            {
+                float3 toDestination = latestCommand.Destination - anchor.ValueRO.Position;
+                toDestination.y = 0.0f;
+
+                if (math.lengthsq(toDestination) > 0.0001f)
+                {
+                    anchor.ValueRW.Forward = math.normalize(toDestination);
+                }
+
+                anchor.ValueRW.Destination = latestCommand.Destination;
+                anchor.ValueRW.IsMoving = true;
+            }
+
+            state.EntityManager.DestroyEntity(_commandQuery);
+        }
+
+
+        /*
+        private EntityQuery _commandQuery;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -83,5 +133,6 @@ namespace PhantomLure.Systems
             // 多数のEntity を使う場合はECB で命令エンティティを後段削除する。
             entityManager.DestroyEntity(_commandQuery);
         }
+        */
     }
 }

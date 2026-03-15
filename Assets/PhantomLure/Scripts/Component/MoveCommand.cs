@@ -42,6 +42,40 @@ namespace PhantomLure.ECS
     }
 
     /// <summary>
+    /// 本隊アンカー参照
+    /// </summary>
+    public struct FormationMember : IComponentData
+    {
+        public Entity AnchorEntity;
+    }
+
+    /// <summary>
+    /// 本隊全体の中心情報
+    /// </summary>
+    public struct MainForceFormationAnchor : IComponentData
+    {
+        public float3 Position;
+        public float3 Forward;
+        public float3 Destination;
+        public float MoveSpeed;
+        public float ArriveDistance;
+        public bool IsMoving;
+    }
+
+    /// <summary>
+    /// 隊列設定
+    /// </summary>
+    public struct MainForceFormationSettings : IComponentData
+    {
+        public int ColumnCount;
+        public float SpacingSide;
+        public float SpacingBack;
+        public float SlotCatchUpDistance;
+        public float SlowDownDistance;
+        public float MaxCatchUpMultiplier;
+    }
+
+    /// 本隊全体への移動命令
     /// 本隊全体への移動命令
     /// </summary>
     public struct MainForceMoveCommand : IComponentData

@@ -2783,9 +2783,12 @@ MonoBehaviour:
   _camera: {fileID: 961739752}
   _groundMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 64
   _stoppingDistance: 0.1
   _rayDistance: 1000
+  _spacingX: 1.5
+  _spacingZ: 1.5
+  _columnCount: 3
 --- !u!4 &2127304460
 Transform:
   m_ObjectHideFlags: 0
