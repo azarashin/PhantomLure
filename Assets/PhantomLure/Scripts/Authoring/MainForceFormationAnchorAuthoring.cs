@@ -58,19 +58,15 @@ namespace PhantomLure.Authoring
                 AddComponent(entity, new MainForceFormationAnchor
                 {
                     Position = authoring.transform.position,
-                    Forward = math.forward(),
+                    Forward = new float3(0.0f, 0.0f, 1.0f),
                     Destination = authoring.transform.position,
-                    MoveSpeed = authoring._moveSpeed,
-                    ArriveDistance = authoring._arriveDistance,
-                    IsMoving = false
-                });
-
-                AddComponent(entity, new MainForceFormationSettings
-                {
+                    MoveSpeed = math.max(0.01f, authoring._moveSpeed),
+                    ArriveDistance = math.max(0.01f, authoring._arriveDistance),
+                    IsMoving = false,
                     ColumnCount = math.max(1, authoring._columnCount),
-                    SpacingSide = authoring._spacingSide,
-                    SpacingBack = authoring._spacingBack,
-                    SlotCatchUpDistance = authoring._slotCatchUpDistance,
+                    SpacingSide = math.max(0.1f, authoring._spacingSide),
+                    SpacingBack = math.max(0.1f, authoring._spacingBack),
+                    SlotCatchUpDistance = math.max(0.01f, authoring._slotCatchUpDistance),
                     SlowDownDistance = math.max(0.01f, authoring._slowDownDistance),
                     MaxCatchUpMultiplier = math.max(1.0f, authoring._maxCatchUpMultiplier)
                 });
@@ -91,7 +87,7 @@ namespace PhantomLure.Authoring
                     LateralProbeWeight = math.max(0.0f, authoring._lateralProbeWeight)
                 });
 
-                AddBuffer<PathPoint>(entity);
+                AddBuffer<PathNode>(entity);
             }
         }
     }

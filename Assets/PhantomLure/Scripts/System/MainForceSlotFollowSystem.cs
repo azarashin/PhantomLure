@@ -21,8 +21,8 @@ namespace PhantomLure.Systems
         public void OnUpdate(ref SystemState state)
         {
             float deltaTime = SystemAPI.Time.DeltaTime;
-            bool hasGrid = SystemAPI.HasSingleton<GridConfig>();
 
+            bool hasGrid = SystemAPI.HasSingleton<GridConfig>();
             GridConfig grid = default;
             DynamicBuffer<GridCell> gridCells = default;
 
@@ -35,30 +35,37 @@ namespace PhantomLure.Systems
 
             foreach ((
                 RefRW<LocalTransform> localTransform,
+                RefRW<MoveTarget> moveTarget,
+                RefRW<MoveState> moveState,
                 RefRO<MoveSpeed> moveSpeed,
                 RefRO<FormationIndex> formationIndex,
                 RefRO<FormationMember> formationMember)
                 in SystemAPI.Query<
                     RefRW<LocalTransform>,
+                    RefRW<MoveTarget>,
+                    RefRW<MoveState>,
                     RefRO<MoveSpeed>,
                     RefRO<FormationIndex>,
-                    RefRO<FormationMember>>().WithAll<MainForceTag>())
+                    RefRO<FormationMember>>()
+                .WithAll<MainForceTag>())
             {
-                if (!SystemAPI.Exists(formationMember.ValueRO.AnchorEntity))
+                Entity anchorEntity = formationMember.ValueRO.AnchorEntity;
+
+                if (!SystemAPI.Exists(anchorEntity))
                 {
+                    moveState.ValueRW.IsMoving = false;
                     continue;
                 }
 
-                RefRO<MainForceFormationAnchor> anchor =
-                    SystemAPI.GetComponentRO<MainForceFormationAnchor>(formationMember.ValueRO.AnchorEntity);
+                if (!SystemAPI.HasComponent<MainForceFormationAnchor>(anchorEntity))
+                {
+                    moveState.ValueRW.IsMoving = false;
+                    continue;
+                }
 
-                RefRO<MainForceFormationSettings> settings =
-                    SystemAPI.GetComponentRO<MainForceFormationSettings>(formationMember.ValueRO.AnchorEntity);
+                MainForceFormationAnchor anchor = SystemAPI.GetComponent<MainForceFormationAnchor>(anchorEntity);
 
-                RefRO<MainForceAvoidanceSettings> avoidanceSettings =
-                    SystemAPI.GetComponentRO<MainForceAvoidanceSettings>(formationMember.ValueRO.AnchorEntity);
-
-                float3 anchorForward = anchor.ValueRO.Forward;
+                float3 anchorForward = anchor.Forward;
                 anchorForward.y = 0.0f;
 
                 if (math.lengthsq(anchorForward) < 0.0001f)
@@ -72,248 +79,223 @@ namespace PhantomLure.Systems
 
                 float3 anchorRight = math.normalize(math.cross(new float3(0.0f, 1.0f, 0.0f), anchorForward));
 
-                int columnCount = math.max(1, settings.ValueRO.ColumnCount);
-                int index = math.max(0, formationIndex.ValueRO.Value);
-                int column = index % columnCount;
-                int row = index / columnCount;
-                float centeredColumn = column - ((columnCount - 1) * 0.5f);
+                float3 slotPosition = CalculateSlotWorldPosition(
+                    anchor,
+                    formationIndex.ValueRO.Value,
+                    anchorForward,
+                    anchorRight);
 
-                float3 idealSlotOffset =
-                    (anchorRight * (centeredColumn * settings.ValueRO.SpacingSide)) -
-                    (anchorForward * (row * settings.ValueRO.SpacingBack));
+                moveTarget.ValueRW.Position = slotPosition;
 
-                float3 idealSlotPosition = anchor.ValueRO.Position + idealSlotOffset;
                 float3 currentPosition = localTransform.ValueRO.Position;
-
-                float3 resolvedSlotPosition = idealSlotPosition;
-
-                if (hasGrid)
-                {
-                    resolvedSlotPosition = FindReachableSlotPosition(
-                        grid,
-                        gridCells,
-                        currentPosition,
-                        idealSlotPosition,
-                        anchorForward,
-                        anchorRight,
-                        settings.ValueRO.SpacingSide,
-                        settings.ValueRO.SpacingBack);
-                }
-
-                float3 toSlot = resolvedSlotPosition - currentPosition;
+                float3 toSlot = slotPosition - currentPosition;
                 toSlot.y = 0.0f;
 
                 float distanceToSlot = math.length(toSlot);
+                float stoppingDistance = math.max(0.01f, moveTarget.ValueRO.StoppingDistance);
 
-                if (distanceToSlot <= 0.02f)
+                if (distanceToSlot <= stoppingDistance)
                 {
+                    moveState.ValueRW.IsMoving = false;
                     continue;
                 }
 
-                float3 desiredDirection = toSlot / math.max(distanceToSlot, 0.0001f);
+                float catchUpMultiplier = CalculateCatchUpMultiplier(anchor, distanceToSlot);
+                float step = moveSpeed.ValueRO.Value * catchUpMultiplier * deltaTime;
 
-                float forwardOffset = math.dot(currentPosition - resolvedSlotPosition, anchorForward);
-                float speedMultiplier = 1.0f;
+                float3 resolvedNextPosition;
+                bool canMove = TryResolveMovement(
+                    hasGrid,
+                    grid,
+                    gridCells,
+                    currentPosition,
+                    toSlot,
+                    step,
+                    out resolvedNextPosition);
 
-                if (forwardOffset > 0.0f)
+                if (!canMove)
                 {
-                    speedMultiplier *= 0.75f;
-                }
-                else
-                {
-                    float catchUpT = math.saturate(
-                        distanceToSlot / math.max(0.01f, settings.ValueRO.SlotCatchUpDistance));
-                    float catchUpMultiplier = math.lerp(
-                        1.0f,
-                        settings.ValueRO.MaxCatchUpMultiplier,
-                        catchUpT);
-                    speedMultiplier *= catchUpMultiplier;
-                }
-
-                float slowDownT = math.saturate(distanceToSlot / settings.ValueRO.SlowDownDistance);
-                float slowDownMultiplier = math.lerp(0.15f, 1.0f, slowDownT);
-                speedMultiplier *= slowDownMultiplier;
-
-                float step = moveSpeed.ValueRO.Value * speedMultiplier * deltaTime;
-                float3 finalDirection = desiredDirection;
-
-                if (hasGrid)
-                {
-                    finalDirection = ChooseBestMoveDirection(
-                        grid,
-                        gridCells,
-                        currentPosition,
-                        resolvedSlotPosition,
-                        desiredDirection,
-                        anchorForward,
-                        step);
+                    moveState.ValueRW.IsMoving = false;
+                    continue;
                 }
 
-                float3 nextPosition = currentPosition + (finalDirection * step);
+                float3 moveDelta = resolvedNextPosition - currentPosition;
+                moveDelta.y = 0.0f;
 
-                if (hasGrid)
+                if (math.lengthsq(moveDelta) <= 0.000001f)
                 {
-                    int2 nextCell = GridUtility.ToCell(grid, nextPosition);
-
-                    if (!GridUtility.IsWalkable(grid, gridCells, nextCell))
-                    {
-                        nextPosition = currentPosition;
-                    }
+                    moveState.ValueRW.IsMoving = false;
+                    continue;
                 }
 
-                localTransform.ValueRW.Position = nextPosition;
+                localTransform.ValueRW.Position = new float3(
+                    resolvedNextPosition.x,
+                    currentPosition.y,
+                    resolvedNextPosition.z);
 
-                float3 flatVelocity = finalDirection;
-                flatVelocity.y = 0.0f;
+                quaternion targetRotation = quaternion.LookRotationSafe(math.normalize(moveDelta), math.up());
+                float rotationT = math.saturate(deltaTime * 10.0f);
+                localTransform.ValueRW.Rotation = math.slerp(localTransform.ValueRO.Rotation, targetRotation, rotationT);
 
-                if (math.lengthsq(flatVelocity) > 0.0001f)
-                {
-                    localTransform.ValueRW.Rotation =
-                        quaternion.LookRotationSafe(math.normalize(flatVelocity), math.up());
-                }
+                moveState.ValueRW.IsMoving = true;
             }
         }
 
-        private static float3 FindReachableSlotPosition(
-            in GridConfig grid,
-            DynamicBuffer<GridCell> gridCells,
-            float3 currentPosition,
-            float3 idealSlotPosition,
+        [BurstCompile]
+        private static float3 CalculateSlotWorldPosition(
+            in MainForceFormationAnchor anchor,
+            int formationIndex,
             float3 anchorForward,
-            float3 anchorRight,
-            float spacingSide,
-            float spacingBack)
+            float3 anchorRight)
         {
-            if (IsWalkableWorld(grid, gridCells, idealSlotPosition))
+            int columns = math.max(1, anchor.ColumnCount);
+            int index = math.max(0, formationIndex);
+
+            int column = index % columns;
+            int row = index / columns;
+
+            float centeredColumn = column - ((columns - 1) * 0.5f);
+
+            float3 offset =
+                (anchorRight * (centeredColumn * anchor.SpacingSide)) -
+                (anchorForward * (row * anchor.SpacingBack));
+
+            return anchor.Position + offset;
+        }
+
+        [BurstCompile]
+        private static float CalculateCatchUpMultiplier(
+            in MainForceFormationAnchor anchor,
+            float distanceToSlot)
+        {
+            float slotCatchUpDistance = math.max(0.01f, anchor.SlotCatchUpDistance);
+            float slowDownDistance = math.max(0.01f, anchor.SlowDownDistance);
+            float maxCatchUpMultiplier = math.max(1.0f, anchor.MaxCatchUpMultiplier);
+
+            if (distanceToSlot <= slowDownDistance)
             {
-                return idealSlotPosition;
+                float t = math.saturate(distanceToSlot / slowDownDistance);
+                return math.lerp(0.35f, 1.0f, t);
             }
 
-            float sideStep = math.max(grid.CellSize, spacingSide * 0.5f);
-            float backStep = math.max(grid.CellSize, spacingBack * 0.5f);
-
-            float3 bestPosition = currentPosition;
-            float bestScore = float.MaxValue;
-
-            for (int back = 0; back <= 3; back++)
+            if (distanceToSlot >= slotCatchUpDistance)
             {
-                for (int side = -3; side <= 3; side++)
+                return maxCatchUpMultiplier;
+            }
+
+            float t2 = math.saturate(
+                (distanceToSlot - slowDownDistance) /
+                math.max(0.01f, slotCatchUpDistance - slowDownDistance));
+
+            return math.lerp(1.0f, maxCatchUpMultiplier, t2);
+        }
+
+        [BurstCompile]
+        private static bool TryResolveMovement(
+            bool hasGrid,
+            in GridConfig grid,
+            DynamicBuffer<GridCell> gridCells,
+            float3 currentPosition,
+            float3 toTarget,
+            float moveDistance,
+            out float3 resolvedNextPosition)
+        {
+            resolvedNextPosition = currentPosition;
+
+            float targetDistance = math.length(toTarget);
+            if (targetDistance <= 0.0001f)
+            {
+                return false;
+            }
+
+            float step = math.min(moveDistance, targetDistance);
+            if (step <= 0.0001f)
+            {
+                return false;
+            }
+
+            float3 forward = toTarget / targetDistance;
+
+            if (!hasGrid)
+            {
+                resolvedNextPosition = currentPosition + (forward * step);
+                resolvedNextPosition.y = currentPosition.y;
+                return true;
+            }
+
+            float3 right = new float3(forward.z, 0.0f, -forward.x);
+
+            float3 forwardCandidate = currentPosition + (forward * step);
+            forwardCandidate.y = currentPosition.y;
+
+            if (IsWalkableWorld(grid, gridCells, forwardCandidate))
+            {
+                resolvedNextPosition = forwardCandidate;
+                return true;
+            }
+
+            float3 slideRight = math.normalize((forward * 0.35f) + (right * 0.65f));
+            float3 slideLeft = math.normalize((forward * 0.35f) - (right * 0.65f));
+
+            float3 rightCandidate = currentPosition + (slideRight * step);
+            rightCandidate.y = currentPosition.y;
+
+            if (IsWalkableWorld(grid, gridCells, rightCandidate))
+            {
+                resolvedNextPosition = rightCandidate;
+                return true;
+            }
+
+            float3 leftCandidate = currentPosition + (slideLeft * step);
+            leftCandidate.y = currentPosition.y;
+
+            if (IsWalkableWorld(grid, gridCells, leftCandidate))
+            {
+                resolvedNextPosition = leftCandidate;
+                return true;
+            }
+
+            float shortStep = step * 0.5f;
+            if (shortStep > 0.02f)
+            {
+                float3 shortForwardCandidate = currentPosition + (forward * shortStep);
+                shortForwardCandidate.y = currentPosition.y;
+
+                if (IsWalkableWorld(grid, gridCells, shortForwardCandidate))
                 {
-                    float3 candidate =
-                        idealSlotPosition
-                        + (anchorRight * (side * sideStep))
-                        - (anchorForward * (back * backStep));
+                    resolvedNextPosition = shortForwardCandidate;
+                    return true;
+                }
 
-                    if (!IsWalkableWorld(grid, gridCells, candidate))
-                    {
-                        continue;
-                    }
+                float3 shortRightCandidate = currentPosition + (slideRight * shortStep);
+                shortRightCandidate.y = currentPosition.y;
 
-                    float score =
-                        math.distance(candidate, idealSlotPosition) * 2.0f
-                        + math.distance(candidate, currentPosition);
+                if (IsWalkableWorld(grid, gridCells, shortRightCandidate))
+                {
+                    resolvedNextPosition = shortRightCandidate;
+                    return true;
+                }
 
-                    if (score < bestScore)
-                    {
-                        bestScore = score;
-                        bestPosition = candidate;
-                    }
+                float3 shortLeftCandidate = currentPosition + (slideLeft * shortStep);
+                shortLeftCandidate.y = currentPosition.y;
+
+                if (IsWalkableWorld(grid, gridCells, shortLeftCandidate))
+                {
+                    resolvedNextPosition = shortLeftCandidate;
+                    return true;
                 }
             }
 
-            return bestPosition;
+            return false;
         }
 
-        private static float3 ChooseBestMoveDirection(
-            in GridConfig grid,
-            DynamicBuffer<GridCell> gridCells,
-            float3 currentPosition,
-            float3 targetPosition,
-            float3 desiredDirection,
-            float3 anchorForward,
-            float step)
-        {
-            float3 up = new float3(0.0f, 1.0f, 0.0f);
-
-            float3 dir0 = math.normalize(desiredDirection);
-            float3 dirL1 = RotateOnPlane(dir0, up, math.radians(25.0f));
-            float3 dirR1 = RotateOnPlane(dir0, up, math.radians(-25.0f));
-            float3 dirL2 = RotateOnPlane(dir0, up, math.radians(50.0f));
-            float3 dirR2 = RotateOnPlane(dir0, up, math.radians(-50.0f));
-            float3 dirBackL = math.normalize((-anchorForward * 0.35f) + math.cross(up, dir0));
-            float3 dirBackR = math.normalize((-anchorForward * 0.35f) - math.cross(up, dir0));
-
-            float3 bestDirection = float3.zero;
-            float bestScore = float.MaxValue;
-
-            EvaluateCandidate(grid, gridCells, currentPosition, targetPosition, dir0, step, ref bestDirection, ref bestScore);
-            EvaluateCandidate(grid, gridCells, currentPosition, targetPosition, dirL1, step, ref bestDirection, ref bestScore);
-            EvaluateCandidate(grid, gridCells, currentPosition, targetPosition, dirR1, step, ref bestDirection, ref bestScore);
-            EvaluateCandidate(grid, gridCells, currentPosition, targetPosition, dirL2, step, ref bestDirection, ref bestScore);
-            EvaluateCandidate(grid, gridCells, currentPosition, targetPosition, dirR2, step, ref bestDirection, ref bestScore);
-            EvaluateCandidate(grid, gridCells, currentPosition, targetPosition, dirBackL, step, ref bestDirection, ref bestScore);
-            EvaluateCandidate(grid, gridCells, currentPosition, targetPosition, dirBackR, step, ref bestDirection, ref bestScore);
-
-            if (bestScore == float.MaxValue)
-            {
-                return float3.zero;
-            }
-
-            return bestDirection;
-        }
-
-        private static void EvaluateCandidate(
-            in GridConfig grid,
-            DynamicBuffer<GridCell> gridCells,
-            float3 currentPosition,
-            float3 targetPosition,
-            float3 direction,
-            float step,
-            ref float3 bestDirection,
-            ref float bestScore)
-        {
-            if (math.lengthsq(direction) < 0.0001f)
-            {
-                return;
-            }
-
-            float3 normalizedDirection = math.normalize(direction);
-            float3 candidatePosition = currentPosition + (normalizedDirection * step);
-
-            if (!IsWalkableWorld(grid, gridCells, candidatePosition))
-            {
-                return;
-            }
-
-            float score = math.distance(candidatePosition, targetPosition);
-
-            if (score < bestScore)
-            {
-                bestScore = score;
-                bestDirection = normalizedDirection;
-            }
-        }
-
-        private static float3 RotateOnPlane(float3 direction, float3 axis, float radians)
-        {
-            quaternion rotation = quaternion.AxisAngle(axis, radians);
-            float3 rotated = math.rotate(rotation, direction);
-            rotated.y = 0.0f;
-
-            if (math.lengthsq(rotated) < 0.0001f)
-            {
-                return direction;
-            }
-
-            return math.normalize(rotated);
-        }
-
+        [BurstCompile]
         private static bool IsWalkableWorld(
             in GridConfig grid,
             DynamicBuffer<GridCell> gridCells,
-            float3 position)
+            float3 worldPosition)
         {
-            int2 cell = GridUtility.ToCell(grid, position);
+            int2 cell = GridUtility.ToCell(grid, worldPosition);
             return GridUtility.IsWalkable(grid, gridCells, cell);
         }
     }
