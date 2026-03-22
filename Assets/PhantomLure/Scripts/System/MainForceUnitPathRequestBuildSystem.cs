@@ -51,7 +51,7 @@ namespace PhantomLure.Systems
                 PathRequest request = new PathRequest
                 {
                     StartWorld = localTransform.ValueRO.Position,
-                    GoalWorld = assignedSlot.ValueRO.WorldPosition
+                    GoalWorld = assignedSlot.ValueRO.NavigationTargetWorld
                 };
 
                 if (SystemAPI.HasComponent<PathRequest>(entity))
@@ -78,7 +78,7 @@ namespace PhantomLure.Systems
                 unitPathState.ValueRW.WaitingForPath = 1;
 
                 unitRepathState.ValueRW.LastRepathTime = elapsedTime;
-                unitRepathState.ValueRW.LastRequestedGoal = assignedSlot.ValueRO.WorldPosition;
+                unitRepathState.ValueRW.LastRequestedGoal = assignedSlot.ValueRO.NavigationTargetWorld;
 
                 unitStuckState.ValueRW.AccumulatedTime = 0.0f;
                 unitStuckState.ValueRW.IsStuck = 0;

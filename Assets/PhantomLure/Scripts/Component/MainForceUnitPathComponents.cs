@@ -8,6 +8,10 @@ namespace PhantomLure.ECS
         public float3 WorldPosition;
         public int2 SlotCell;
         public byte IsValid;
+
+        public float3 NavigationTargetWorld;
+        public int2 NavigationTargetCell;
+        public byte IsSlotWalkable;
     }
 
     public struct UnitPathState : IComponentData

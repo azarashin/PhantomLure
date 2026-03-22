@@ -15,11 +15,16 @@ namespace PhantomLure.Systems
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<MainForceTag>();
+            state.RequireForUpdate<GridConfig>();
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
+            GridConfig grid = SystemAPI.GetSingleton<GridConfig>();
+            Entity gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+            DynamicBuffer<GridCell> gridCells = SystemAPI.GetBuffer<GridCell>(gridEntity);
+
             foreach ((RefRO<LocalTransform> localTransform,
                       RefRO<MoveSpeed> moveSpeed,
                       RefRO<AssignedSlot> assignedSlot,
@@ -36,30 +41,26 @@ namespace PhantomLure.Systems
                     .WithAll<MainForceTag>()
                     .WithEntityAccess())
             {
-                float3 previousDesiredVelocity = desiredVelocity.ValueRO.Value;
-                float3 newDesiredVelocity = float3.zero;
+                desiredVelocity.ValueRW.Value = float3.zero;
 
                 if (assignedSlot.ValueRO.IsValid == 0)
                 {
-                    desiredVelocity.ValueRW.Value = float3.zero;
                     moveState.ValueRW.IsMoving = false;
                     continue;
                 }
 
                 if (SystemAPI.HasComponent<PathFailedTag>(entity))
                 {
-                    float3 direct = assignedSlot.ValueRO.WorldPosition - localTransform.ValueRO.Position;
+                    float3 direct = assignedSlot.ValueRO.NavigationTargetWorld - localTransform.ValueRO.Position;
                     direct.y = 0.0f;
 
                     if (math.lengthsq(direct) > 0.0001f)
                     {
-                        newDesiredVelocity = math.normalize(direct) * moveSpeed.ValueRO.Value;
-                        desiredVelocity.ValueRW.Value = newDesiredVelocity;
+                        desiredVelocity.ValueRW.Value = math.normalize(direct) * moveSpeed.ValueRO.Value;
                         moveState.ValueRW.IsMoving = true;
                     }
                     else
                     {
-                        desiredVelocity.ValueRW.Value = float3.zero;
                         moveState.ValueRW.IsMoving = false;
                     }
 
@@ -68,14 +69,12 @@ namespace PhantomLure.Systems
 
                 if (!SystemAPI.HasComponent<PathReadyTag>(entity))
                 {
-                    desiredVelocity.ValueRW.Value = float3.zero;
                     moveState.ValueRW.IsMoving = false;
                     continue;
                 }
 
                 if (!SystemAPI.HasBuffer<PathPoint>(entity))
                 {
-                    desiredVelocity.ValueRW.Value = float3.zero;
                     moveState.ValueRW.IsMoving = false;
                     continue;
                 }
@@ -84,70 +83,89 @@ namespace PhantomLure.Systems
 
                 if (pathBuffer.Length == 0)
                 {
-                    desiredVelocity.ValueRW.Value = float3.zero;
                     moveState.ValueRW.IsMoving = false;
                     continue;
                 }
 
                 unitPathState.ValueRW.WaitingForPath = 0;
 
-                float waypointSkipDistance = unitPathState.ValueRO.WaypointReachDistance * 2.0f;
-                bool hasPreviousDirection = math.lengthsq(previousDesiredVelocity) > 0.0001f;
-                float3 previousDirection = hasPreviousDirection
-                    ? math.normalize(previousDesiredVelocity)
-                    : float3.zero;
-
+                // 1. 到達済みの waypoint だけ順に消化する
                 while (unitPathState.ValueRO.CurrentPathIndex < pathBuffer.Length)
                 {
                     float3 waypoint = pathBuffer[unitPathState.ValueRO.CurrentPathIndex].Value;
                     float3 toWaypoint = waypoint - localTransform.ValueRO.Position;
                     toWaypoint.y = 0.0f;
 
-                    float distanceToWaypointSq = math.lengthsq(toWaypoint);
-
-                    if (distanceToWaypointSq <= (waypointSkipDistance * waypointSkipDistance))
+                    if (math.length(toWaypoint) > unitPathState.ValueRO.WaypointReachDistance)
                     {
-                        unitPathState.ValueRW.CurrentPathIndex += 1;
-                        continue;
+                        break;
                     }
 
-                    if (hasPreviousDirection)
-                    {
-                        float3 toWaypointDir = math.normalize(toWaypoint);
-                        float dot = math.dot(previousDirection, toWaypointDir);
-
-                        // 現在の進行方向に対してかなり後ろならスキップ
-                        if (dot < -0.2f)
-                        {
-                            unitPathState.ValueRW.CurrentPathIndex += 1;
-                            continue;
-                        }
-                    }
-
-                    break;
+                    unitPathState.ValueRW.CurrentPathIndex += 1;
                 }
 
-                float3 targetPosition = assignedSlot.ValueRO.WorldPosition;
+                // 2. 現在位置から直線で見通せる範囲で、最も先の waypoint を target にする
+                int targetIndex = math.min(unitPathState.ValueRO.CurrentPathIndex, pathBuffer.Length - 1);
 
-                if (unitPathState.ValueRO.CurrentPathIndex < pathBuffer.Length)
+                for (int i = targetIndex; i < pathBuffer.Length; i++)
                 {
-                    targetPosition = pathBuffer[unitPathState.ValueRO.CurrentPathIndex].Value;
+                    float3 candidate = pathBuffer[i].Value;
+
+                    if (HasLineOfSight(grid, gridCells, localTransform.ValueRO.Position, candidate))
+                    {
+                        targetIndex = i;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
 
+                float3 targetPosition = pathBuffer[targetIndex].Value;
                 float3 toTarget = targetPosition - localTransform.ValueRO.Position;
                 toTarget.y = 0.0f;
 
                 if (math.lengthsq(toTarget) <= 0.0001f)
                 {
-                    desiredVelocity.ValueRW.Value = float3.zero;
                     moveState.ValueRW.IsMoving = false;
                     continue;
                 }
 
-                newDesiredVelocity = math.normalize(toTarget) * moveSpeed.ValueRO.Value;
-                desiredVelocity.ValueRW.Value = newDesiredVelocity;
+                desiredVelocity.ValueRW.Value = math.normalize(toTarget) * moveSpeed.ValueRO.Value;
                 moveState.ValueRW.IsMoving = true;
             }
+        }
+
+        [BurstCompile]
+        private static bool HasLineOfSight(GridConfig grid, DynamicBuffer<GridCell> gridCells, float3 from, float3 to)
+        {
+            float3 delta = to - from;
+            delta.y = 0.0f;
+
+            float distance = math.length(delta);
+
+            if (distance <= 0.001f)
+            {
+                return true;
+            }
+
+            float3 direction = delta / distance;
+            float sampleStep = math.max(0.1f, grid.CellSize * 0.4f);
+            int sampleCount = math.max(1, (int)math.ceil(distance / sampleStep));
+
+            for (int i = 1; i <= sampleCount; i++)
+            {
+                float t = (float)i / sampleCount;
+                float3 sample = from + (delta * t);
+                int2 cell = GridUtility.ToCell(grid, sample);
+
+                if (!GridUtility.IsWalkable(grid, gridCells, cell))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

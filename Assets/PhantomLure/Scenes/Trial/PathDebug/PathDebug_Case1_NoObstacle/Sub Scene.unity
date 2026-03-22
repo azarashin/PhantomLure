@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a153eda54d2f441988d3cdf86e74d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.Authoring.MainForceUnitAuthoring
-  _anchorAuthoring: {fileID: 0}
+  _anchorAuthoring: {fileID: 345006697}
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 3
@@ -477,7 +477,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a153eda54d2f441988d3cdf86e74d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.Authoring.MainForceUnitAuthoring
-  _anchorAuthoring: {fileID: 0}
+  _anchorAuthoring: {fileID: 345006697}
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 9
@@ -716,7 +716,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a153eda54d2f441988d3cdf86e74d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.Authoring.MainForceUnitAuthoring
-  _anchorAuthoring: {fileID: 0}
+  _anchorAuthoring: {fileID: 345006697}
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 10
@@ -775,7 +775,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a153eda54d2f441988d3cdf86e74d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.Authoring.MainForceUnitAuthoring
-  _anchorAuthoring: {fileID: 0}
+  _anchorAuthoring: {fileID: 345006697}
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 8
@@ -924,7 +924,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a153eda54d2f441988d3cdf86e74d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.Authoring.MainForceUnitAuthoring
-  _anchorAuthoring: {fileID: 0}
+  _anchorAuthoring: {fileID: 345006697}
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 4
@@ -1073,7 +1073,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a153eda54d2f441988d3cdf86e74d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.Authoring.MainForceUnitAuthoring
-  _anchorAuthoring: {fileID: 0}
+  _anchorAuthoring: {fileID: 345006697}
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 13
@@ -1132,7 +1132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a153eda54d2f441988d3cdf86e74d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.Authoring.MainForceUnitAuthoring
-  _anchorAuthoring: {fileID: 0}
+  _anchorAuthoring: {fileID: 345006697}
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 14
@@ -1684,7 +1684,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a153eda54d2f441988d3cdf86e74d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.Authoring.MainForceUnitAuthoring
-  _anchorAuthoring: {fileID: 0}
+  _anchorAuthoring: {fileID: 345006697}
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 2
@@ -2001,7 +2001,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a153eda54d2f441988d3cdf86e74d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.Authoring.MainForceUnitAuthoring
-  _anchorAuthoring: {fileID: 0}
+  _anchorAuthoring: {fileID: 345006697}
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 11
@@ -2060,7 +2060,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a153eda54d2f441988d3cdf86e74d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.Authoring.MainForceUnitAuthoring
-  _anchorAuthoring: {fileID: 0}
+  _anchorAuthoring: {fileID: 345006697}
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 12
@@ -2119,7 +2119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a153eda54d2f441988d3cdf86e74d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.Authoring.MainForceUnitAuthoring
-  _anchorAuthoring: {fileID: 0}
+  _anchorAuthoring: {fileID: 345006697}
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 7
@@ -2224,7 +2224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a153eda54d2f441988d3cdf86e74d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.Authoring.MainForceUnitAuthoring
-  _anchorAuthoring: {fileID: 0}
+  _anchorAuthoring: {fileID: 345006697}
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 6
@@ -2587,7 +2587,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a153eda54d2f441988d3cdf86e74d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.Authoring.MainForceUnitAuthoring
-  _anchorAuthoring: {fileID: 0}
+  _anchorAuthoring: {fileID: 345006697}
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 1
@@ -2662,7 +2662,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a153eda54d2f441988d3cdf86e74d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.Authoring.MainForceUnitAuthoring
-  _anchorAuthoring: {fileID: 0}
+  _anchorAuthoring: {fileID: 345006697}
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 15
@@ -2721,7 +2721,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a153eda54d2f441988d3cdf86e74d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: PhantomLure::PhantomLure.Authoring.MainForceUnitAuthoring
-  _anchorAuthoring: {fileID: 0}
+  _anchorAuthoring: {fileID: 345006697}
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 5

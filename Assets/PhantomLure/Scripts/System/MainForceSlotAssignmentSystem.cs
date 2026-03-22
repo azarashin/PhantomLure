@@ -14,18 +14,15 @@ namespace PhantomLure.Systems
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<MainForceTag>();
+            state.RequireForUpdate<GridConfig>();
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            bool hasGrid = SystemAPI.HasSingleton<GridConfig>();
-            GridConfig grid = default;
-
-            if (hasGrid)
-            {
-                grid = SystemAPI.GetSingleton<GridConfig>();
-            }
+            GridConfig grid = SystemAPI.GetSingleton<GridConfig>();
+            Entity gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+            DynamicBuffer<GridCell> gridCells = SystemAPI.GetBuffer<GridCell>(gridEntity);
 
             foreach ((RefRW<AssignedSlot> assignedSlot, RefRO<FormationIndex> formationIndex, RefRO<FormationMember> formationMember)
                 in SystemAPI.Query<RefRW<AssignedSlot>, RefRO<FormationIndex>, RefRO<FormationMember>>()
@@ -33,13 +30,7 @@ namespace PhantomLure.Systems
             {
                 Entity anchorEntity = formationMember.ValueRO.AnchorEntity;
 
-                if (!SystemAPI.Exists(anchorEntity))
-                {
-                    assignedSlot.ValueRW.IsValid = 0;
-                    continue;
-                }
-
-                if (!SystemAPI.HasComponent<MainForceFormationAnchor>(anchorEntity))
+                if (!SystemAPI.Exists(anchorEntity) || !SystemAPI.HasComponent<MainForceFormationAnchor>(anchorEntity))
                 {
                     assignedSlot.ValueRW.IsValid = 0;
                     continue;
@@ -62,17 +53,26 @@ namespace PhantomLure.Systems
                 float3 anchorRight = math.normalize(math.cross(new float3(0.0f, 1.0f, 0.0f), anchorForward));
 
                 float3 slotWorldPosition = CalculateSlotWorldPosition(anchor, formationIndex.ValueRO.Value, anchorForward, anchorRight);
+                int2 slotCell = GridUtility.ToCell(grid, slotWorldPosition);
+                bool isSlotWalkable = GridUtility.IsWalkable(grid, gridCells, slotCell);
 
                 assignedSlot.ValueRW.WorldPosition = slotWorldPosition;
+                assignedSlot.ValueRW.SlotCell = slotCell;
                 assignedSlot.ValueRW.IsValid = 1;
+                assignedSlot.ValueRW.IsSlotWalkable = isSlotWalkable ? (byte)1 : (byte)0;
 
-                if (hasGrid)
+                if (isSlotWalkable)
                 {
-                    assignedSlot.ValueRW.SlotCell = GridUtility.ToCell(grid, slotWorldPosition);
+                    assignedSlot.ValueRW.NavigationTargetWorld = slotWorldPosition;
+                    assignedSlot.ValueRW.NavigationTargetCell = slotCell;
                 }
                 else
                 {
-                    assignedSlot.ValueRW.SlotCell = int2.zero;
+                    float3 fallbackTarget = anchor.Position;
+                    int2 fallbackCell = GridUtility.ToCell(grid, fallbackTarget);
+
+                    assignedSlot.ValueRW.NavigationTargetWorld = fallbackTarget;
+                    assignedSlot.ValueRW.NavigationTargetCell = fallbackCell;
                 }
             }
         }
