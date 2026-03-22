@@ -36,10 +36,12 @@ namespace PhantomLure.Systems
                     .WithAll<MainForceTag>()
                     .WithEntityAccess())
             {
-                desiredVelocity.ValueRW.Value = float3.zero;
+                float3 previousDesiredVelocity = desiredVelocity.ValueRO.Value;
+                float3 newDesiredVelocity = float3.zero;
 
                 if (assignedSlot.ValueRO.IsValid == 0)
                 {
+                    desiredVelocity.ValueRW.Value = float3.zero;
                     moveState.ValueRW.IsMoving = false;
                     continue;
                 }
@@ -51,11 +53,13 @@ namespace PhantomLure.Systems
 
                     if (math.lengthsq(direct) > 0.0001f)
                     {
-                        desiredVelocity.ValueRW.Value = math.normalize(direct) * moveSpeed.ValueRO.Value;
+                        newDesiredVelocity = math.normalize(direct) * moveSpeed.ValueRO.Value;
+                        desiredVelocity.ValueRW.Value = newDesiredVelocity;
                         moveState.ValueRW.IsMoving = true;
                     }
                     else
                     {
+                        desiredVelocity.ValueRW.Value = float3.zero;
                         moveState.ValueRW.IsMoving = false;
                     }
 
@@ -64,12 +68,14 @@ namespace PhantomLure.Systems
 
                 if (!SystemAPI.HasComponent<PathReadyTag>(entity))
                 {
+                    desiredVelocity.ValueRW.Value = float3.zero;
                     moveState.ValueRW.IsMoving = false;
                     continue;
                 }
 
                 if (!SystemAPI.HasBuffer<PathPoint>(entity))
                 {
+                    desiredVelocity.ValueRW.Value = float3.zero;
                     moveState.ValueRW.IsMoving = false;
                     continue;
                 }
@@ -78,11 +84,18 @@ namespace PhantomLure.Systems
 
                 if (pathBuffer.Length == 0)
                 {
+                    desiredVelocity.ValueRW.Value = float3.zero;
                     moveState.ValueRW.IsMoving = false;
                     continue;
                 }
 
                 unitPathState.ValueRW.WaitingForPath = 0;
+
+                float waypointSkipDistance = unitPathState.ValueRO.WaypointReachDistance * 2.0f;
+                bool hasPreviousDirection = math.lengthsq(previousDesiredVelocity) > 0.0001f;
+                float3 previousDirection = hasPreviousDirection
+                    ? math.normalize(previousDesiredVelocity)
+                    : float3.zero;
 
                 while (unitPathState.ValueRO.CurrentPathIndex < pathBuffer.Length)
                 {
@@ -90,12 +103,28 @@ namespace PhantomLure.Systems
                     float3 toWaypoint = waypoint - localTransform.ValueRO.Position;
                     toWaypoint.y = 0.0f;
 
-                    if (math.length(toWaypoint) > unitPathState.ValueRO.WaypointReachDistance)
+                    float distanceToWaypointSq = math.lengthsq(toWaypoint);
+
+                    if (distanceToWaypointSq <= (waypointSkipDistance * waypointSkipDistance))
                     {
-                        break;
+                        unitPathState.ValueRW.CurrentPathIndex += 1;
+                        continue;
                     }
 
-                    unitPathState.ValueRW.CurrentPathIndex += 1;
+                    if (hasPreviousDirection)
+                    {
+                        float3 toWaypointDir = math.normalize(toWaypoint);
+                        float dot = math.dot(previousDirection, toWaypointDir);
+
+                        // 現在の進行方向に対してかなり後ろならスキップ
+                        if (dot < -0.2f)
+                        {
+                            unitPathState.ValueRW.CurrentPathIndex += 1;
+                            continue;
+                        }
+                    }
+
+                    break;
                 }
 
                 float3 targetPosition = assignedSlot.ValueRO.WorldPosition;
@@ -110,11 +139,13 @@ namespace PhantomLure.Systems
 
                 if (math.lengthsq(toTarget) <= 0.0001f)
                 {
+                    desiredVelocity.ValueRW.Value = float3.zero;
                     moveState.ValueRW.IsMoving = false;
                     continue;
                 }
 
-                desiredVelocity.ValueRW.Value = math.normalize(toTarget) * moveSpeed.ValueRO.Value;
+                newDesiredVelocity = math.normalize(toTarget) * moveSpeed.ValueRO.Value;
+                desiredVelocity.ValueRW.Value = newDesiredVelocity;
                 moveState.ValueRW.IsMoving = true;
             }
         }

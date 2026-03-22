@@ -43,10 +43,9 @@ namespace PhantomLure.Systems
                     continue;
                 }
 
-                if (SystemAPI.HasBuffer<PathPoint>(entity))
+                if (!SystemAPI.HasBuffer<PathPoint>(entity))
                 {
-                    DynamicBuffer<PathPoint> pathBuffer = SystemAPI.GetBuffer<PathPoint>(entity);
-                    pathBuffer.Clear();
+                    ecb.AddBuffer<PathPoint>(entity);
                 }
 
                 PathRequest request = new PathRequest
@@ -69,19 +68,13 @@ namespace PhantomLure.Systems
                     ecb.AddComponent<PathRequestTag>(entity);
                 }
 
-                if (SystemAPI.HasComponent<PathReadyTag>(entity))
-                {
-                    ecb.RemoveComponent<PathReadyTag>(entity);
-                }
-
                 if (SystemAPI.HasComponent<PathFailedTag>(entity))
                 {
                     ecb.RemoveComponent<PathFailedTag>(entity);
                 }
 
-                ecb.RemoveComponent<NeedsUnitRepathTag>(entity);
-
-                unitPathState.ValueRW.CurrentPathIndex = 0;
+                // PathReadyTag はここでは消さない。
+                // 新しい path が解けるまでは古い path を使い続ける。
                 unitPathState.ValueRW.WaitingForPath = 1;
 
                 unitRepathState.ValueRW.LastRepathTime = elapsedTime;
@@ -89,6 +82,8 @@ namespace PhantomLure.Systems
 
                 unitStuckState.ValueRW.AccumulatedTime = 0.0f;
                 unitStuckState.ValueRW.IsStuck = 0;
+
+                ecb.RemoveComponent<NeedsUnitRepathTag>(entity);
             }
 
             ecb.Playback(state.EntityManager);
