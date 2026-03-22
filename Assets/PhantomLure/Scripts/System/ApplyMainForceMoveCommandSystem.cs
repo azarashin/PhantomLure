@@ -26,8 +26,6 @@ namespace PhantomLure.Systems
 
             state.RequireForUpdate(_commandQuery);
             state.RequireForUpdate(_anchorQuery);
-            state.RequireForUpdate<GridConfig>();
-            state.RequireForUpdate<SystemHandleMarker>();
         }
 
         [BurstCompile]
@@ -42,12 +40,15 @@ namespace PhantomLure.Systems
             }
 
             MainForceMoveCommand latestCommand = commands[commands.Length - 1];
+
             EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
-            foreach ((RefRW<MainForceFormationAnchor> anchor, RefRW<MainForcePathState> pathState, Entity entity) in
-                     SystemAPI.Query<
-                         RefRW<MainForceFormationAnchor>,
-                         RefRW<MainForcePathState>>().WithEntityAccess())
+            foreach ((RefRW<MainForceFormationAnchor> anchor,
+                      RefRW<MainForcePathState> pathState,
+                      Entity entity)
+                in SystemAPI.Query<RefRW<MainForceFormationAnchor>,
+                                   RefRW<MainForcePathState>>()
+                    .WithEntityAccess())
             {
                 float3 toDestination = latestCommand.Destination - anchor.ValueRO.Position;
                 toDestination.y = 0.0f;
@@ -60,6 +61,7 @@ namespace PhantomLure.Systems
                 anchor.ValueRW.Destination = latestCommand.Destination;
                 anchor.ValueRW.IsMoving = true;
 
+                // path state は path buffer と必ずセットで再初期化する
                 pathState.ValueRW.CurrentPathIndex = 0;
                 pathState.ValueRW.WaitingForPath = 1;
 
@@ -73,21 +75,19 @@ namespace PhantomLure.Systems
                     ecb.AddBuffer<PathPoint>(entity);
                 }
 
+                PathRequest request = new PathRequest
+                {
+                    StartWorld = anchor.ValueRO.Position,
+                    GoalWorld = latestCommand.Destination
+                };
+
                 if (SystemAPI.HasComponent<PathRequest>(entity))
                 {
-                    ecb.SetComponent(entity, new PathRequest
-                    {
-                        StartWorld = anchor.ValueRO.Position,
-                        GoalWorld = latestCommand.Destination
-                    });
+                    ecb.SetComponent(entity, request);
                 }
                 else
                 {
-                    ecb.AddComponent(entity, new PathRequest
-                    {
-                        StartWorld = anchor.ValueRO.Position,
-                        GoalWorld = latestCommand.Destination
-                    });
+                    ecb.AddComponent(entity, request);
                 }
 
                 if (!SystemAPI.HasComponent<PathRequestTag>(entity))

@@ -1,6 +1,8 @@
-﻿using Unity.Burst;
+﻿using PhantomLure.Systems;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 
 namespace PhantomLure.ECS
 {
@@ -16,18 +18,19 @@ namespace PhantomLure.ECS
 
         public void OnUpdate(ref SystemState state)
         {
-            var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
-            var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
-            var gridCells = SystemAPI.GetBuffer<GridCell>(gridEntity);
+            Entity gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+            GridConfig grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
+            DynamicBuffer<GridCell> gridCells = SystemAPI.GetBuffer<GridCell>(gridEntity);
 
-            var ecb = new EntityCommandBuffer(Allocator.Temp);
+            EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
-            foreach (var (request, entity) in
-                     SystemAPI.Query<RefRO<PathRequest>>()
-                     .WithAll<PathRequestTag>()
-                     .WithEntityAccess())
+            foreach ((RefRO<PathRequest> request, Entity entity)
+                in SystemAPI.Query<RefRO<PathRequest>>()
+                    .WithAll<PathRequestTag>()
+                    .WithEntityAccess())
             {
                 DynamicBuffer<PathPoint> pathBuffer;
+
                 if (SystemAPI.HasBuffer<PathPoint>(entity))
                 {
                     pathBuffer = SystemAPI.GetBuffer<PathPoint>(entity);
@@ -38,7 +41,23 @@ namespace PhantomLure.ECS
                     pathBuffer = ecb.AddBuffer<PathPoint>(entity);
                 }
 
-                var path = new NativeList<Unity.Mathematics.float3>(Allocator.Temp);
+                if (SystemAPI.HasComponent<MainForcePathState>(entity))
+                {
+                    MainForcePathState pathState = SystemAPI.GetComponent<MainForcePathState>(entity);
+                    pathState.CurrentPathIndex = 0;
+                    pathState.WaitingForPath = 1;
+                    ecb.SetComponent(entity, pathState);
+                }
+
+                if (SystemAPI.HasComponent<UnitPathState>(entity))
+                {
+                    UnitPathState unitPathState = SystemAPI.GetComponent<UnitPathState>(entity);
+                    unitPathState.CurrentPathIndex = 0;
+                    unitPathState.WaitingForPath = 1;
+                    ecb.SetComponent(entity, unitPathState);
+                }
+
+                NativeList<float3> path = new NativeList<float3>(Allocator.Temp);
 
                 bool ok = AStarPathfinder.TryFindPath(
                     grid,
@@ -55,7 +74,10 @@ namespace PhantomLure.ECS
                 {
                     for (int i = 0; i < path.Length; i++)
                     {
-                        pathBuffer.Add(new PathPoint { Value = path[i] });
+                        pathBuffer.Add(new PathPoint
+                        {
+                            Value = path[i]
+                        });
                     }
 
                     ecb.AddComponent<PathReadyTag>(entity);
@@ -77,5 +99,7 @@ namespace PhantomLure.ECS
     /// RequireForUpdate 用のダミー singleton
     /// プロジェクトの初期化時に1個だけ作る
     /// </summary>
-    public struct SystemHandleMarker : IComponentData { }
+    public struct SystemHandleMarker : IComponentData
+    {
+    }
 }
