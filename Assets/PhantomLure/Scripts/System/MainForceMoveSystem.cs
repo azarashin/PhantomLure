@@ -20,6 +20,7 @@ namespace PhantomLure.Systems
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
+            return; 
             float deltaTime = SystemAPI.Time.DeltaTime;
 
             foreach ((

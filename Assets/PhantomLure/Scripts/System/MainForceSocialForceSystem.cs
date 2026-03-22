@@ -9,7 +9,6 @@ namespace PhantomLure.Systems
 {
     [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup))]
-    [UpdateAfter(typeof(MainForceSlotFollowSystem))]
     public partial struct MainForceSocialForceSystem : ISystem
     {
         private EntityQuery _unitQuery;

@@ -34,6 +34,21 @@ namespace PhantomLure.Authoring
         [SerializeField]
         float _maxRepulsionSpeed = 2.0f;
 
+        [SerializeField]
+        float _waypointReachDistance = 0.2f;
+
+        [SerializeField]
+        float _repathInterval = 0.25f;
+
+        [SerializeField]
+        float _slotMoveThreshold = 0.5f;
+
+        [SerializeField]
+        float _stuckDistanceThreshold = 0.03f;
+
+        [SerializeField]
+        float _stuckTimeThreshold = 0.35f;
+
         private class Baker : Baker<MainForceUnitAuthoring>
         {
             public override void Bake(MainForceUnitAuthoring authoring)
@@ -81,6 +96,53 @@ namespace PhantomLure.Authoring
                     FalloffDistance = math.max(0.01f, authoring._falloffDistance),
                     MaxRepulsionSpeed = math.max(0.0f, authoring._maxRepulsionSpeed)
                 });
+
+                AddComponent(entity, new AssignedSlot
+                {
+                    WorldPosition = authoring.transform.position,
+                    SlotCell = int2.zero,
+                    IsValid = 0
+                });
+
+                AddComponent(entity, new UnitPathState
+                {
+                    CurrentPathIndex = 0,
+                    WaypointReachDistance = math.max(0.05f, authoring._waypointReachDistance),
+                    WaitingForPath = 0
+                });
+
+                AddComponent(entity, new UnitRepathSettings
+                {
+                    RepathInterval = math.max(0.05f, authoring._repathInterval),
+                    SlotMoveThreshold = math.max(0.05f, authoring._slotMoveThreshold),
+                    StuckDistanceThreshold = math.max(0.001f, authoring._stuckDistanceThreshold),
+                    StuckTimeThreshold = math.max(0.05f, authoring._stuckTimeThreshold)
+                });
+
+                AddComponent(entity, new UnitRepathState
+                {
+                    LastRepathTime = -999.0f,
+                    LastRequestedGoal = authoring.transform.position,
+                    LastPosition = authoring.transform.position
+                });
+
+                AddComponent(entity, new UnitStuckState
+                {
+                    AccumulatedTime = 0.0f,
+                    IsStuck = 0
+                });
+
+                AddComponent(entity, new DesiredVelocity
+                {
+                    Value = float3.zero
+                });
+
+                AddComponent(entity, new AvoidanceVelocity
+                {
+                    Value = float3.zero
+                });
+
+                AddBuffer<PathPoint>(entity);
             }
         }
     }

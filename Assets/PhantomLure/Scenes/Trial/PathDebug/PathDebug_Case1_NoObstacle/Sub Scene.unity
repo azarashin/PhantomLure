@@ -152,6 +152,16 @@ MonoBehaviour:
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 3
+  _personalSpaceRadius: 0.6
+  _neighborRadius: 1.5
+  _repulsionStrength: 4
+  _falloffDistance: 0.35
+  _maxRepulsionSpeed: 2
+  _waypointReachDistance: 0.2
+  _repathInterval: 0.25
+  _slotMoveThreshold: 0.5
+  _stuckDistanceThreshold: 0.03
+  _stuckTimeThreshold: 0.35
 --- !u!4 &96898043
 Transform:
   m_ObjectHideFlags: 0
@@ -471,6 +481,16 @@ MonoBehaviour:
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 9
+  _personalSpaceRadius: 0.6
+  _neighborRadius: 1.5
+  _repulsionStrength: 4
+  _falloffDistance: 0.35
+  _maxRepulsionSpeed: 2
+  _waypointReachDistance: 0.2
+  _repathInterval: 0.25
+  _slotMoveThreshold: 0.5
+  _stuckDistanceThreshold: 0.03
+  _stuckTimeThreshold: 0.35
 --- !u!1 &449047881
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,6 +720,16 @@ MonoBehaviour:
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 10
+  _personalSpaceRadius: 0.6
+  _neighborRadius: 1.5
+  _repulsionStrength: 4
+  _falloffDistance: 0.35
+  _maxRepulsionSpeed: 2
+  _waypointReachDistance: 0.2
+  _repathInterval: 0.25
+  _slotMoveThreshold: 0.5
+  _stuckDistanceThreshold: 0.03
+  _stuckTimeThreshold: 0.35
 --- !u!1 &624264429
 GameObject:
   m_ObjectHideFlags: 0
@@ -749,6 +779,16 @@ MonoBehaviour:
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 8
+  _personalSpaceRadius: 0.6
+  _neighborRadius: 1.5
+  _repulsionStrength: 4
+  _falloffDistance: 0.35
+  _maxRepulsionSpeed: 2
+  _waypointReachDistance: 0.2
+  _repathInterval: 0.25
+  _slotMoveThreshold: 0.5
+  _stuckDistanceThreshold: 0.03
+  _stuckTimeThreshold: 0.35
 --- !u!1 &673455389
 GameObject:
   m_ObjectHideFlags: 0
@@ -888,6 +928,16 @@ MonoBehaviour:
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 4
+  _personalSpaceRadius: 0.6
+  _neighborRadius: 1.5
+  _repulsionStrength: 4
+  _falloffDistance: 0.35
+  _maxRepulsionSpeed: 2
+  _waypointReachDistance: 0.2
+  _repathInterval: 0.25
+  _slotMoveThreshold: 0.5
+  _stuckDistanceThreshold: 0.03
+  _stuckTimeThreshold: 0.35
 --- !u!1 &819199739
 GameObject:
   m_ObjectHideFlags: 0
@@ -1027,6 +1077,16 @@ MonoBehaviour:
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 13
+  _personalSpaceRadius: 0.6
+  _neighborRadius: 1.5
+  _repulsionStrength: 4
+  _falloffDistance: 0.35
+  _maxRepulsionSpeed: 2
+  _waypointReachDistance: 0.2
+  _repathInterval: 0.25
+  _slotMoveThreshold: 0.5
+  _stuckDistanceThreshold: 0.03
+  _stuckTimeThreshold: 0.35
 --- !u!1 &972821506
 GameObject:
   m_ObjectHideFlags: 0
@@ -1076,6 +1136,16 @@ MonoBehaviour:
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 14
+  _personalSpaceRadius: 0.6
+  _neighborRadius: 1.5
+  _repulsionStrength: 4
+  _falloffDistance: 0.35
+  _maxRepulsionSpeed: 2
+  _waypointReachDistance: 0.2
+  _repathInterval: 0.25
+  _slotMoveThreshold: 0.5
+  _stuckDistanceThreshold: 0.03
+  _stuckTimeThreshold: 0.35
 --- !u!1 &1150144194
 GameObject:
   m_ObjectHideFlags: 0
@@ -1109,6 +1179,16 @@ MonoBehaviour:
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 0
+  _personalSpaceRadius: 0.6
+  _neighborRadius: 1.5
+  _repulsionStrength: 4
+  _falloffDistance: 0.35
+  _maxRepulsionSpeed: 2
+  _waypointReachDistance: 0.2
+  _repathInterval: 0.25
+  _slotMoveThreshold: 0.5
+  _stuckDistanceThreshold: 0.03
+  _stuckTimeThreshold: 0.35
 --- !u!4 &1150144196
 Transform:
   m_ObjectHideFlags: 0
@@ -1608,6 +1688,16 @@ MonoBehaviour:
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 2
+  _personalSpaceRadius: 0.6
+  _neighborRadius: 1.5
+  _repulsionStrength: 4
+  _falloffDistance: 0.35
+  _maxRepulsionSpeed: 2
+  _waypointReachDistance: 0.2
+  _repathInterval: 0.25
+  _slotMoveThreshold: 0.5
+  _stuckDistanceThreshold: 0.03
+  _stuckTimeThreshold: 0.35
 --- !u!4 &1408154812
 Transform:
   m_ObjectHideFlags: 0
@@ -1915,6 +2005,16 @@ MonoBehaviour:
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 11
+  _personalSpaceRadius: 0.6
+  _neighborRadius: 1.5
+  _repulsionStrength: 4
+  _falloffDistance: 0.35
+  _maxRepulsionSpeed: 2
+  _waypointReachDistance: 0.2
+  _repathInterval: 0.25
+  _slotMoveThreshold: 0.5
+  _stuckDistanceThreshold: 0.03
+  _stuckTimeThreshold: 0.35
 --- !u!1 &1775677671
 GameObject:
   m_ObjectHideFlags: 0
@@ -1964,6 +2064,16 @@ MonoBehaviour:
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 12
+  _personalSpaceRadius: 0.6
+  _neighborRadius: 1.5
+  _repulsionStrength: 4
+  _falloffDistance: 0.35
+  _maxRepulsionSpeed: 2
+  _waypointReachDistance: 0.2
+  _repathInterval: 0.25
+  _slotMoveThreshold: 0.5
+  _stuckDistanceThreshold: 0.03
+  _stuckTimeThreshold: 0.35
 --- !u!1 &1794330133
 GameObject:
   m_ObjectHideFlags: 0
@@ -2013,6 +2123,16 @@ MonoBehaviour:
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 7
+  _personalSpaceRadius: 0.6
+  _neighborRadius: 1.5
+  _repulsionStrength: 4
+  _falloffDistance: 0.35
+  _maxRepulsionSpeed: 2
+  _waypointReachDistance: 0.2
+  _repathInterval: 0.25
+  _slotMoveThreshold: 0.5
+  _stuckDistanceThreshold: 0.03
+  _stuckTimeThreshold: 0.35
 --- !u!1 &1808998740
 GameObject:
   m_ObjectHideFlags: 0
@@ -2108,6 +2228,16 @@ MonoBehaviour:
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 6
+  _personalSpaceRadius: 0.6
+  _neighborRadius: 1.5
+  _repulsionStrength: 4
+  _falloffDistance: 0.35
+  _maxRepulsionSpeed: 2
+  _waypointReachDistance: 0.2
+  _repathInterval: 0.25
+  _slotMoveThreshold: 0.5
+  _stuckDistanceThreshold: 0.03
+  _stuckTimeThreshold: 0.35
 --- !u!1 &1855728891
 GameObject:
   m_ObjectHideFlags: 0
@@ -2461,6 +2591,16 @@ MonoBehaviour:
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 1
+  _personalSpaceRadius: 0.6
+  _neighborRadius: 1.5
+  _repulsionStrength: 4
+  _falloffDistance: 0.35
+  _maxRepulsionSpeed: 2
+  _waypointReachDistance: 0.2
+  _repathInterval: 0.25
+  _slotMoveThreshold: 0.5
+  _stuckDistanceThreshold: 0.03
+  _stuckTimeThreshold: 0.35
 --- !u!4 &2057789625
 Transform:
   m_ObjectHideFlags: 0
@@ -2526,6 +2666,16 @@ MonoBehaviour:
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 15
+  _personalSpaceRadius: 0.6
+  _neighborRadius: 1.5
+  _repulsionStrength: 4
+  _falloffDistance: 0.35
+  _maxRepulsionSpeed: 2
+  _waypointReachDistance: 0.2
+  _repathInterval: 0.25
+  _slotMoveThreshold: 0.5
+  _stuckDistanceThreshold: 0.03
+  _stuckTimeThreshold: 0.35
 --- !u!1 &2144715038
 GameObject:
   m_ObjectHideFlags: 0
@@ -2575,6 +2725,16 @@ MonoBehaviour:
   _moveSpeed: 3.5
   _stoppingDistance: 0.1
   _formationIndex: 5
+  _personalSpaceRadius: 0.6
+  _neighborRadius: 1.5
+  _repulsionStrength: 4
+  _falloffDistance: 0.35
+  _maxRepulsionSpeed: 2
+  _waypointReachDistance: 0.2
+  _repathInterval: 0.25
+  _slotMoveThreshold: 0.5
+  _stuckDistanceThreshold: 0.03
+  _stuckTimeThreshold: 0.35
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
