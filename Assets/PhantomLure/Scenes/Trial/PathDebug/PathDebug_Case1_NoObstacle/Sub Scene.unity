@@ -154,10 +154,10 @@ MonoBehaviour:
   _formationIndex: 3
   _personalSpaceRadius: 0.6
   _neighborRadius: 1.5
-  _repulsionStrength: 4
+  _repulsionStrength: 10
   _falloffDistance: 0.35
   _maxRepulsionSpeed: 2
-  _waypointReachDistance: 0.2
+  _waypointReachDistance: 0.45
   _repathInterval: 0.25
   _slotMoveThreshold: 0.5
   _stuckDistanceThreshold: 0.03
@@ -390,8 +390,8 @@ MonoBehaviour:
   _moveSpeed: 4
   _arriveDistance: 0.25
   _columnCount: 5
-  _spacingSide: 1.6
-  _spacingBack: 2
+  _spacingSide: 3
+  _spacingBack: 4
   _slotCatchUpDistance: 3
   _slowDownDistance: 1.25
   _maxCatchUpMultiplier: 1.75
@@ -483,10 +483,10 @@ MonoBehaviour:
   _formationIndex: 9
   _personalSpaceRadius: 0.6
   _neighborRadius: 1.5
-  _repulsionStrength: 4
+  _repulsionStrength: 10
   _falloffDistance: 0.35
   _maxRepulsionSpeed: 2
-  _waypointReachDistance: 0.2
+  _waypointReachDistance: 0.45
   _repathInterval: 0.25
   _slotMoveThreshold: 0.5
   _stuckDistanceThreshold: 0.03
@@ -722,10 +722,10 @@ MonoBehaviour:
   _formationIndex: 10
   _personalSpaceRadius: 0.6
   _neighborRadius: 1.5
-  _repulsionStrength: 4
+  _repulsionStrength: 10
   _falloffDistance: 0.35
   _maxRepulsionSpeed: 2
-  _waypointReachDistance: 0.2
+  _waypointReachDistance: 0.45
   _repathInterval: 0.25
   _slotMoveThreshold: 0.5
   _stuckDistanceThreshold: 0.03
@@ -781,10 +781,10 @@ MonoBehaviour:
   _formationIndex: 8
   _personalSpaceRadius: 0.6
   _neighborRadius: 1.5
-  _repulsionStrength: 4
+  _repulsionStrength: 10
   _falloffDistance: 0.35
   _maxRepulsionSpeed: 2
-  _waypointReachDistance: 0.2
+  _waypointReachDistance: 0.45
   _repathInterval: 0.25
   _slotMoveThreshold: 0.5
   _stuckDistanceThreshold: 0.03
@@ -930,10 +930,10 @@ MonoBehaviour:
   _formationIndex: 4
   _personalSpaceRadius: 0.6
   _neighborRadius: 1.5
-  _repulsionStrength: 4
+  _repulsionStrength: 10
   _falloffDistance: 0.35
   _maxRepulsionSpeed: 2
-  _waypointReachDistance: 0.2
+  _waypointReachDistance: 0.45
   _repathInterval: 0.25
   _slotMoveThreshold: 0.5
   _stuckDistanceThreshold: 0.03
@@ -965,7 +965,7 @@ Transform:
   m_GameObject: {fileID: 819199739}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.57, z: 0}
+  m_LocalPosition: {x: -0.03, y: 0.57, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1079,10 +1079,10 @@ MonoBehaviour:
   _formationIndex: 13
   _personalSpaceRadius: 0.6
   _neighborRadius: 1.5
-  _repulsionStrength: 4
+  _repulsionStrength: 10
   _falloffDistance: 0.35
   _maxRepulsionSpeed: 2
-  _waypointReachDistance: 0.2
+  _waypointReachDistance: 0.45
   _repathInterval: 0.25
   _slotMoveThreshold: 0.5
   _stuckDistanceThreshold: 0.03
@@ -1138,10 +1138,10 @@ MonoBehaviour:
   _formationIndex: 14
   _personalSpaceRadius: 0.6
   _neighborRadius: 1.5
-  _repulsionStrength: 4
+  _repulsionStrength: 10
   _falloffDistance: 0.35
   _maxRepulsionSpeed: 2
-  _waypointReachDistance: 0.2
+  _waypointReachDistance: 0.45
   _repathInterval: 0.25
   _slotMoveThreshold: 0.5
   _stuckDistanceThreshold: 0.03
@@ -1181,10 +1181,10 @@ MonoBehaviour:
   _formationIndex: 0
   _personalSpaceRadius: 0.6
   _neighborRadius: 1.5
-  _repulsionStrength: 4
+  _repulsionStrength: 10
   _falloffDistance: 0.35
   _maxRepulsionSpeed: 2
-  _waypointReachDistance: 0.2
+  _waypointReachDistance: 0.45
   _repathInterval: 0.25
   _slotMoveThreshold: 0.5
   _stuckDistanceThreshold: 0.03
@@ -1412,7 +1412,7 @@ Transform:
   m_GameObject: {fileID: 1279640923}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.57, z: 0}
+  m_LocalPosition: {x: -0.62, y: 0.57, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1690,10 +1690,10 @@ MonoBehaviour:
   _formationIndex: 2
   _personalSpaceRadius: 0.6
   _neighborRadius: 1.5
-  _repulsionStrength: 4
+  _repulsionStrength: 10
   _falloffDistance: 0.35
   _maxRepulsionSpeed: 2
-  _waypointReachDistance: 0.2
+  _waypointReachDistance: 0.45
   _repathInterval: 0.25
   _slotMoveThreshold: 0.5
   _stuckDistanceThreshold: 0.03
@@ -2007,10 +2007,10 @@ MonoBehaviour:
   _formationIndex: 11
   _personalSpaceRadius: 0.6
   _neighborRadius: 1.5
-  _repulsionStrength: 4
+  _repulsionStrength: 10
   _falloffDistance: 0.35
   _maxRepulsionSpeed: 2
-  _waypointReachDistance: 0.2
+  _waypointReachDistance: 0.45
   _repathInterval: 0.25
   _slotMoveThreshold: 0.5
   _stuckDistanceThreshold: 0.03
@@ -2066,10 +2066,10 @@ MonoBehaviour:
   _formationIndex: 12
   _personalSpaceRadius: 0.6
   _neighborRadius: 1.5
-  _repulsionStrength: 4
+  _repulsionStrength: 10
   _falloffDistance: 0.35
   _maxRepulsionSpeed: 2
-  _waypointReachDistance: 0.2
+  _waypointReachDistance: 0.45
   _repathInterval: 0.25
   _slotMoveThreshold: 0.5
   _stuckDistanceThreshold: 0.03
@@ -2125,10 +2125,10 @@ MonoBehaviour:
   _formationIndex: 7
   _personalSpaceRadius: 0.6
   _neighborRadius: 1.5
-  _repulsionStrength: 4
+  _repulsionStrength: 10
   _falloffDistance: 0.35
   _maxRepulsionSpeed: 2
-  _waypointReachDistance: 0.2
+  _waypointReachDistance: 0.45
   _repathInterval: 0.25
   _slotMoveThreshold: 0.5
   _stuckDistanceThreshold: 0.03
@@ -2230,10 +2230,10 @@ MonoBehaviour:
   _formationIndex: 6
   _personalSpaceRadius: 0.6
   _neighborRadius: 1.5
-  _repulsionStrength: 4
+  _repulsionStrength: 10
   _falloffDistance: 0.35
   _maxRepulsionSpeed: 2
-  _waypointReachDistance: 0.2
+  _waypointReachDistance: 0.45
   _repathInterval: 0.25
   _slotMoveThreshold: 0.5
   _stuckDistanceThreshold: 0.03
@@ -2593,10 +2593,10 @@ MonoBehaviour:
   _formationIndex: 1
   _personalSpaceRadius: 0.6
   _neighborRadius: 1.5
-  _repulsionStrength: 4
+  _repulsionStrength: 10
   _falloffDistance: 0.35
   _maxRepulsionSpeed: 2
-  _waypointReachDistance: 0.2
+  _waypointReachDistance: 0.45
   _repathInterval: 0.25
   _slotMoveThreshold: 0.5
   _stuckDistanceThreshold: 0.03
@@ -2668,10 +2668,10 @@ MonoBehaviour:
   _formationIndex: 15
   _personalSpaceRadius: 0.6
   _neighborRadius: 1.5
-  _repulsionStrength: 4
+  _repulsionStrength: 10
   _falloffDistance: 0.35
   _maxRepulsionSpeed: 2
-  _waypointReachDistance: 0.2
+  _waypointReachDistance: 0.45
   _repathInterval: 0.25
   _slotMoveThreshold: 0.5
   _stuckDistanceThreshold: 0.03
@@ -2727,10 +2727,10 @@ MonoBehaviour:
   _formationIndex: 5
   _personalSpaceRadius: 0.6
   _neighborRadius: 1.5
-  _repulsionStrength: 4
+  _repulsionStrength: 10
   _falloffDistance: 0.35
   _maxRepulsionSpeed: 2
-  _waypointReachDistance: 0.2
+  _waypointReachDistance: 0.45
   _repathInterval: 0.25
   _slotMoveThreshold: 0.5
   _stuckDistanceThreshold: 0.03

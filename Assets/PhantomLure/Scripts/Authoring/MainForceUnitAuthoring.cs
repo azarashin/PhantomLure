@@ -35,7 +35,7 @@ namespace PhantomLure.Authoring
         float _maxRepulsionSpeed = 2.0f;
 
         [SerializeField]
-        float _waypointReachDistance = 0.2f;
+        float _waypointReachDistance = 0.45f;
 
         [SerializeField]
         float _repathInterval = 0.25f;
