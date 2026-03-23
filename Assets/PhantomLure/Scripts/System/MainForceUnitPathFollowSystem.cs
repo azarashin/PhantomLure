@@ -133,6 +133,17 @@ namespace PhantomLure.Systems
 
                 desiredVelocity.ValueRW.Value = math.normalize(toTarget) * moveSpeed.ValueRO.Value;
                 moveState.ValueRW.IsMoving = true;
+
+                bool debug = false; 
+                if(debug)
+                {
+                    UnityEngine.Debug.Log($"[MainForceUnitPathFollowSystem]: entity={entity.ToString()}, "
+                        + $"targetIndex={targetIndex}, Position={localTransform.ValueRO.Position}, targetPosition={targetPosition}, toTarget={toTarget}");
+                    for (int i = 0; i < pathBuffer.Length; i++)
+                    {
+                        UnityEngine.Debug.Log($"  [MainForceUnitPathFollowSystem]: entity={entity.ToString()},waypoint[{i}] = {pathBuffer[i].Value}");
+                    }
+                }
             }
         }
 
