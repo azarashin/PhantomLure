@@ -18,11 +18,6 @@ namespace PhantomLure.ECS
         public bool Action;    // デコイ設置等の1ボタン
     }
 
-    /// <summary>移動パラメータ（Player/Enemy/Droneでも流用可）</summary>
-    public struct MoveSpeed : IComponentData
-    {
-        public float Value; // m/s
-    }
     public struct PlayerCommandData : IComponentData
     {
         public float2 Move;                 // -1 ～ 1
